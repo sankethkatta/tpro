@@ -84,8 +84,8 @@ class InvertedIndex(BaseIndex):
 
   
   def query(self, query, k=10):
-    words = (w for w in re.findall('\w+', query.lower()))
-    candidates = self._index[w]
+    words = [w for w in re.findall('\w+', query.lower())]
+    candidates = self._index[words[0]]
     for w in words:
       candidates &= self._index[w]
     return [c for c in candidates][:k]
