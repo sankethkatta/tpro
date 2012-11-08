@@ -1,3 +1,7 @@
 # ignoring compiled python files
 *.pyc
 *.py~
+
+# ignoring vim temp files
+*.swp
+*.swo
