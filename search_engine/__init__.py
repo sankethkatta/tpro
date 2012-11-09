@@ -8,10 +8,16 @@ from math import sqrt
 
 pp = pprint.PrettyPrinter(indent=2)
 
+def tokenize(query):
+  return re.findall('\w+', query.lower())
+
 class Vector(dict):
 
   def build_from_query(self, query):
-    for w in (s.lower() for s in re.findall('\w+', query)):
+    self.build_from_list(tokenize(query))
+
+  def build_from_list(self, lst):
+    for w in lst: 
       self[w] = self.get(w, 0.0) + 1.0
     
   def dot_product(self, other):
@@ -61,7 +67,7 @@ class ForwardIndex(BaseIndex):
   def build(self, fnames):
     for fname in fnames:
       with open(fname, 'r') as f:
-        words = [w.lower() for w in re.findall('\w+', f.read())]
+        words = tokenize(f.read())
         for w in words:
           self._index[fname][w] += 1.0
 
@@ -78,13 +84,13 @@ class InvertedIndex(BaseIndex):
   def build(self, fnames):
     for fname in fnames:
       with open(fname, 'r') as f:
-        words = [w for w in re.findall('\w+', f.read().lower())]
+        words = tokenize(f.read())
         for w in words:
           self._index[w].add(fname)
 
   
   def query(self, query, k=10):
-    words = [w for w in re.findall('\w+', query.lower())]
+    words = tokenize(query)
     candidates = self._index[words[0]]
     for w in words:
       candidates &= self._index[w]
@@ -106,7 +112,7 @@ class SearchEngine(object):
     
     
 if __name__ == '__main__':
-  search_engine = SearchEngine(InvertedIndex())
+  search_engine = SearchEngine(ForwardIndex())
   data_folder = [os.path.join('data', fname) for fname in os.listdir('data')]
   search_engine.build(data_folder)
   while True:
