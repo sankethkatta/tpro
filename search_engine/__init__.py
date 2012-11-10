@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from collections import defaultdict
+from collections import defaultdict, Counter
 import re
 import pprint
 import operator
@@ -11,19 +11,19 @@ pp = pprint.PrettyPrinter(indent=2)
 def tokenize(query):
   return re.findall('\w+', query.lower())
 
-class Vector(dict):
+class Vector(Counter):
 
   def build_from_query(self, query):
     self.build_from_list(tokenize(query))
 
   def build_from_list(self, lst):
     for w in lst: 
-      self[w] = self.get(w, 0.0) + 1.0
+      self[w] += 1.0
     
   def dot_product(self, other):
     v1, v2 = self, other
     keys = set(v1.keys()) | set(v2.keys())
-    return reduce(operator.add, (v1.get(key, 0.0) * v2.get(key, 0.0) for key in keys))
+    return reduce(operator.add, (v1[key] * v2[key] for key in keys))
       
   def cosine_similarity(self, other):
     dot_product = self.dot_product(other)
@@ -58,7 +58,7 @@ class BaseIndex(object):
 class ForwardIndex(BaseIndex):
   
   def __init__(self):
-      self._index = defaultdict(lambda : defaultdict(float))
+      self._index = defaultdict(Vector)
 
   def build(self, fnames):
     for fname in fnames:
@@ -70,7 +70,7 @@ class ForwardIndex(BaseIndex):
   def query(self, query, k=10):
     query_vector = Vector()
     query_vector.build_from_query(query)
-    return sorted(((query_vector.cosine_similarity(Vector(term_vector)), doc) for (doc, term_vector) in self._index.iteritems()), reverse=True)[:k]
+    return sorted(((query_vector.cosine_similarity(term_vector), doc) for (doc, term_vector) in self._index.iteritems()), reverse=True)[:k]
 
 class InvertedIndex(BaseIndex):
   
@@ -114,10 +114,7 @@ if __name__ == '__main__':
   while True:
     try:
       query = raw_input("Enter a query: ")
-      if query == "show_index":
-        pp.pprint(dict(search_engine.index._index))
-      else:
-        pp.pprint(search_engine.query(query))
+      pp.pprint(search_engine.query(query))
     except Exception as err:
       print err
       print '\nGoodbye'
