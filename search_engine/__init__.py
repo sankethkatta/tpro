@@ -23,11 +23,11 @@ class Vector(dict):
   def dot_product(self, other):
     v1 = self
     v2 = other
-    v3 = Vector()
     key_union = set(v1.keys()) | set(v2.keys())
+    result = 0
     for key in key_union:
-      v3[key] = v1.get(key, 0.0) * v2.get(key, 0.0)
-    return sum(v for (k,v) in v3.iteritems())
+      result += v1.get(key, 0.0) * v2.get(key, 0.0)
+    return result
       
   def cosine_similarity(self, other):
     dot_product = self.dot_product(other)
