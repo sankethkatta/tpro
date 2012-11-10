@@ -51,9 +51,6 @@ class BaseIndex(object):
   def build(self, fnames):
     raise NotImplementedError
 
-  def query(self, query, k=10):
-    raise NotImplementedError
-
 
 class ForwardIndex(BaseIndex):
   
@@ -67,10 +64,14 @@ class ForwardIndex(BaseIndex):
         for w in words:
           self._index[fname][w] += 1.0
 
-  def query(self, query, k=10):
+  def query(self, query, candidates=None, k=10):
     query_vector = Vector()
     query_vector.build_from_query(query)
-    return sorted(((query_vector.cosine_similarity(term_vector), doc) for (doc, term_vector) in self._index.iteritems()), reverse=True)[:k]
+    
+    if candidates is None:
+      candidates = self._index.iterkeys()
+
+    return sorted(((query_vector.cosine_similarity(self._index[doc]), doc) for doc in candidates), reverse=True)[:k]
 
 class InvertedIndex(BaseIndex):
   
@@ -85,7 +86,7 @@ class InvertedIndex(BaseIndex):
           self._index[w].add(fname)
 
   
-  def query(self, query, k=10):
+  def candidates(self, query, k=10):
     words = tokenize(query)
     candidates = self._index[words[0]]
     for w in words:
@@ -97,18 +98,21 @@ class InvertedIndex(BaseIndex):
 
 class SearchEngine(object):
 
-  def __init__(self, index):
-    self.index = index
+  def __init__(self, findex, iindex):
+    self.forward_index = findex
+    self.inverted_index = iindex
 
   def build(self, fnames):
-    self.index.build(fnames)
+    self.forward_index.build(fnames)
+    self.inverted_index.build(fnames)
 
   def query(self, query, k=10):
-    return self.index.query(query, k=k)
+    candidates = self.inverted_index.candidates(query, k=k)
+    return self.forward_index.query(query, candidates=candidates, k=k)
     
     
 if __name__ == '__main__':
-  search_engine = SearchEngine(ForwardIndex())
+  search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
   data_folder = [os.path.join('data', fname) for fname in os.listdir('data')]
   search_engine.build(data_folder)
   while True:
