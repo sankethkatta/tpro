@@ -6,5 +6,7 @@
 *.swp
 *.swo
 
-# ignoring auth.json file
-auth.json
+# ignoring json and csv files
+*.json
+*.csv
+
