@@ -4,7 +4,7 @@ from tweepy import Cursor
 import getpass
 import sys
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 import re
 import pprint
 import sqlite3
@@ -77,7 +77,7 @@ class TwitterScraper(TwitterApplication):
   
   def __init__(self, **kwargs):
     TwitterApplication.__init__(self, **kwargs)
-    self.users_to_scrape = kwargs.get('users_to_scrape', ['justinbieber'])
+    self.users_to_scrape = deque(kwargs.get('users_to_scrape', ['justinbieber']))
 
   def scrape(self):
     with open('scraper_data.csv', 'w') as f:
@@ -86,7 +86,7 @@ class TwitterScraper(TwitterApplication):
         # pop the first user off the stack
         username = self.users_to_scrape.pop()
         # push them to the end of the stack
-        self.users_to_scrape.append(username)
+        self.users_to_scrape.appendleft(username)
 
         for status in Cursor(self.api.user_timeline, id=username).items():
           for w in self.tokenize(status.text):
