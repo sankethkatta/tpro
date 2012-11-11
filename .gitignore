@@ -5,3 +5,6 @@
 # ignoring vim temp files
 *.swp
 *.swo
+
+# ignoring auth.json file
+auth.json
