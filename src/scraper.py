@@ -88,10 +88,10 @@ class TwitterScraper(TwitterApplication):
         # push them to the end of the stack
         self.users_to_scrape.appendleft(username)
 
-        for status in Cursor(self.api.user_timeline, id=username).items():
+        for status in Cursor(self.api.user_timeline, id=username, count=1000).items():
+          print status.text
           for w in self.tokenize(status.text):
             val = ('{username},{w}\n'.format(username=username, w=w))
-            print val
             f.write(val)
 
       
