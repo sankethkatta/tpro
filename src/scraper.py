@@ -10,6 +10,8 @@ import pprint
 import sqlite3
 import argparse
 import json
+import nltk
+import nltk.corpus as corpus
 
 # attempt to load secret keys from json file
 # in our repo, we will not have this actual file
@@ -28,6 +30,7 @@ access_token = obj['access_token']
 access_token_secret = obj['access_token_secret']
 
 auth = [consumer_key, consumer_secret, access_token, access_token_secret]
+stopwords = set(corpus.stopwords.words('english'))
 
 class TwitterApplication(object):
   """
@@ -71,13 +74,13 @@ class TwitterApplication(object):
     return self._api
 
   def tokenize(self, s):
-    return re.findall('\w+', s)
+    return [w for w in re.findall('\w+', s) if w not in stopwords]
 
 class TwitterScraper(TwitterApplication):
   
   def __init__(self, **kwargs):
     TwitterApplication.__init__(self, **kwargs)
-    self.users_to_scrape = deque(kwargs.get('users_to_scrape', ['justinbieber']))
+    self.users_to_scrape = deque(kwargs.get('users_to_scrape', ['justinbieber', 'obama']))
 
   def scrape(self):
     with open('scraper_data.csv', 'w') as f:
@@ -87,12 +90,12 @@ class TwitterScraper(TwitterApplication):
         username = self.users_to_scrape.pop()
         # push them to the end of the stack
         self.users_to_scrape.appendleft(username)
+        print self.users_to_scrape
 
-        for status in Cursor(self.api.user_timeline, id=username, count=1000).items():
+        for status in Cursor(self.api.user_timeline, id=username, count=10000).items():
           print status.text
           for w in self.tokenize(status.text):
             val = ('{username},{w}\n'.format(username=username, w=w))
-            f.write(val)
 
       
 if __name__ == '__main__':
