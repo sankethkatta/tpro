@@ -2396,7 +2396,7 @@ nprpolitics,politics
 nprpolitics,not
 nprpolitics,quite
 nprpolitics,so
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,conspiracy
 nprpolitics,theory
 nprpolitics,experts
@@ -5876,7 +5876,7 @@ nprpolitics,political
 nprpolitics,ads
 nprpolitics,that
 nprpolitics,make
-nprpolitics,false
+nprpolitics,FALSE
 nprpolitics,claims
 nprpolitics,omg
 nprpolitics,a
@@ -8961,7 +8961,7 @@ nprpolitics,a
 nprpolitics,question
 nprpolitics,julieom2
 nprpolitics,its
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,hes
 nprpolitics,not
 nprpolitics,releasing
@@ -13384,7 +13384,7 @@ nprpolitics,capitalism
 nprpolitics,charge
 nprpolitics,may
 nprpolitics,ring
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,for
 nprpolitics,leaders
 nprpolitics,of
@@ -14349,9 +14349,9 @@ nprpolitics,vetoes
 nprpolitics,voter
 nprpolitics,id
 nprpolitics,law
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,or
-nprpolitics,false
+nprpolitics,FALSE
 nprpolitics,elected
 nprpolitics,officials
 nprpolitics,interpret
@@ -24559,7 +24559,7 @@ nprpolitics,its
 nprpolitics,all
 nprpolitics,politics
 nprpolitics,march
-nprpolitics,01
+nprpolitics,1
 nprpolitics,2012
 nprpolitics,ohio
 nprpolitics,poll
@@ -26083,7 +26083,7 @@ nprpolitics,ads
 nprpolitics,native
 nprpolitics,son
 nprpolitics,vs
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,conservative
 nprpolitics,obama
 nprpolitics,encourages
@@ -27711,7 +27711,7 @@ nprpolitics,with
 nprpolitics,35
 nprpolitics,precincts
 nprpolitics,reporting
-nprpolitics,romney	481
+nprpolitics,"romney	481"
 nprpolitics,gingrich
 nprpolitics,"308
 santorum"
@@ -28516,7 +28516,7 @@ nprpolitics,heart
 nprpolitics,this
 nprpolitics,is
 nprpolitics,not
-nprpolitics,true
+nprpolitics,TRUE
 nprpolitics,coming
 nprpolitics,shortly
 nprpolitics,the
@@ -29567,7 +29567,7 @@ nprpolitics,a
 nprpolitics,big
 nprpolitics,contrast
 nprpolitics,from
-nprpolitics,08
+nprpolitics,8
 nprpolitics,when
 nprpolitics,just
 nprpolitics,34
