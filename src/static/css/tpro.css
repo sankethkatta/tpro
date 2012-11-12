@@ -1,0 +1,39 @@
+.professionals_list {
+    list-style: none;
+}
+
+.professionals_list .span3 {
+    text-align: center;
+    padding-top: 10px;
+
+    /* Border Radius */
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    /* Fancy Hover Transitions */
+    -webkit-transition: background linear 0.3s;
+    -moz-transition: background linear 0.3s;
+    -ms-transition: background linear 0.3s;
+    -o-transition: background linear 0.3s;
+    transition: background linear 0.3s;
+}
+
+.professionals_list .span3:hover {
+    background-color: #bfd6f4;
+    
+    /* Fancy Hover Transitions */
+    -webkit-transition: background linear 0.3s;
+    -moz-transition: background linear 0.3s;
+    -ms-transition: background linear 0.3s;
+    -o-transition: background linear 0.3s;
+    transition: background linear 0.3s;
+}
+
+.professionals_list h2 {
+    font-size: 20px;
+}
+
+.professionals_list a:hover {
+    text-decoration: none;
+}
