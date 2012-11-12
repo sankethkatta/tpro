@@ -8,5 +8,5 @@
 
 # ignoring json and csv files
 *.json
-*.csv
+
 
