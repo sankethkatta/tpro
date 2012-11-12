@@ -110,11 +110,15 @@ class SearchEngine(object):
     candidates = self.inverted_index.candidates(query, k=k)
     return self.forward_index.query(query, candidates=candidates, k=k)
     
+def main():
+  search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
+  DATA_DIRECTORY = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'data')
+  data_folder = [os.path.join(DATA_DIRECTORY, fname) for fname in os.listdir(DATA_DIRECTORY)]
+  search_engine.build(data_folder)
+  return search_engine
     
 if __name__ == '__main__':
-  search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
-  data_folder = [os.path.join('data', fname) for fname in os.listdir('data')]
-  search_engine.build(data_folder)
+  search_engine = main()
   while True:
     try:
       query = raw_input("Enter a query: ")
