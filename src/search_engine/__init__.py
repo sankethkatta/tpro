@@ -60,9 +60,10 @@ class ForwardIndex(BaseIndex):
   def build(self, fnames):
     for fname in fnames:
       with open(fname, 'r') as f:
-        words = tokenize(f.read())
-        for w in words:
-          self._index[fname][w] += 1.0
+        for line in f:
+          words = tokenize(line)
+          for w in words:
+            self._index[fname][w] += 1.0
 
   def query(self, query, candidates=None, k=10):
     query_vector = Vector()
@@ -81,9 +82,10 @@ class InvertedIndex(BaseIndex):
   def build(self, fnames):
     for fname in fnames:
       with open(fname, 'r') as f:
-        words = tokenize(f.read())
-        for w in words:
-          self._index[w].add(fname)
+        for line in f:
+          words = tokenize(line.strip())
+          for w in words:
+            self._index[w].add(fname)
 
   
   def candidates(self, query):
