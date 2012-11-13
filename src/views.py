@@ -20,7 +20,9 @@ def analyze():
         similarity = s_engine.query(request.form['query'])
         to_client = []
         for score in similarity:
-            to_client.append({"document": os.path.split(score[1])[1], "score": score[0]})
+            file = os.path.split(score[1])
+            folder = os.path.split(file[0])
+            to_client.append({"industry": folder[1], "user": file[1].strip(".csv"), "score": score[0]})
 
         return json.dumps(to_client)
     else:

@@ -25,7 +25,8 @@
         
         <table id="resultTable" class="table table-striped table-bordered">
             <thead>
-                <th>Document:</th>
+                <th>Industry:</th>
+                <th>User:</th>
                 <th>Similarity:</th>
             </thead>
             <tbody>
@@ -53,7 +54,7 @@
                 var tbody = $("#resultTable tbody");
                 tbody.children().remove()
                 for (i = 0; i < data.length; i++) {
-                   tbody.append("<tr><td>"+data[i].document+"</td><td>"+data[i].score+"</td></tr>");
+                   tbody.append("<tr><td>"+data[i].industry+"</td><td>"+data[i].user+"</td><td>"+data[i].score+"</td></tr>");
                 };
             };
         </script>

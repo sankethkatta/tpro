@@ -113,7 +113,10 @@ class SearchEngine(object):
 def main():
   search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
   DATA_DIRECTORY = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'data')
-  data_folder = [os.path.join(DATA_DIRECTORY, fname) for fname in os.listdir(DATA_DIRECTORY)]
+  section_folders = [os.path.join(DATA_DIRECTORY, dname) for dname in os.listdir(DATA_DIRECTORY)]
+  data_folder = []
+  for folder in section_folders:
+    data_folder.extend([os.path.join(folder, fname) for fname in os.listdir(folder)])
   search_engine.build(data_folder)
   return search_engine
     
