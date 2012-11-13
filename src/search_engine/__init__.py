@@ -90,9 +90,9 @@ class InvertedIndex(BaseIndex):
   
   def candidates(self, query):
     words = tokenize(query)
-    candidates = self._index[words[0]]
+    candidates = set(self._index[words[0]]) # this needs to be a COPY of the list, or else we'll overwrite previous values
     for w in words:
-      candidates &= self._index[w]
+      candidates |= self._index[w]          # let a candidate be a document with at least one of the query terms, we'll get better results this way
     return [c for c in candidates]
       
 
