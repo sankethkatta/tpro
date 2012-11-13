@@ -86,12 +86,12 @@ class InvertedIndex(BaseIndex):
           self._index[w].add(fname)
 
   
-  def candidates(self, query, k=10):
+  def candidates(self, query):
     words = tokenize(query)
     candidates = self._index[words[0]]
     for w in words:
       candidates &= self._index[w]
-    return [c for c in candidates][:k]
+    return [c for c in candidates]
       
 
 
@@ -107,7 +107,7 @@ class SearchEngine(object):
     self.inverted_index.build(fnames)
 
   def query(self, query, k=10):
-    candidates = self.inverted_index.candidates(query, k=k)
+    candidates = self.inverted_index.candidates(query)
     return self.forward_index.query(query, candidates=candidates, k=k)
     
 def main():
