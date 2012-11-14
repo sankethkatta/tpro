@@ -94,11 +94,11 @@ class ForwardIndex(BaseIndex):
 
   def idf(self, term):
     """ Returns inverse-document-frequency of a given term """
-    return self.number_documents()/max(1.0, sum(float(term in self._index[doc]) for doc in self._index.iterkeys()))
+    return log(self.number_documents()/max(1.0, sum(float(term in self._index[doc]) for doc in self._index.iterkeys())))
 
   def tf_idf(self, term, doc):
     """ Returns the tf_idf score for :param term: and :param doc:"""
-    return self.tf(term, doc)*log(self.idf(term))
+    return self.tf(term, doc)*self.idf(term)
 
 
 class InvertedIndex(BaseIndex):
@@ -124,7 +124,6 @@ class InvertedIndex(BaseIndex):
       # let a candidate be a document with at least one of the query terms, we'll get better results this way
       candidates |= self._index[w]          
     return [c for c in candidates]
-    
 
 
 class SearchEngine(object):
@@ -136,6 +135,9 @@ class SearchEngine(object):
   def build(self, fnames):
     self.forward_index.build(fnames)
     self.inverted_index.build(fnames)
+    
+    
+
 
   def query(self, query, k=10):
     candidates = self.inverted_index.candidates(query)
