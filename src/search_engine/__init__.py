@@ -60,7 +60,7 @@ class ForwardIndex(BaseIndex):
   
   def __init__(self):
       self._index = defaultdict(Vector)
-      self._index2 = defaultdict(Vector)
+      self._vectors = defaultdict(Vector)
 
   def build(self, fnames):
     for fname in fnames:
@@ -72,16 +72,16 @@ class ForwardIndex(BaseIndex):
 
     for fname in self._index.iterkeys():
       for w in self._index[fname]:
-        self._index2[fname][w] = self.tf_idf(w, fname)
+        self._vectors[fname][w] = self.tf_idf(w, fname)
 
   def query(self, query, candidates=None, k=10):
     query_vector = Vector()
     query_vector.build_tf_idf(query, self)
     
     if candidates is None:
-      candidates = self._index2.iterkeys()
+      candidates = self._vectors.iterkeys()
 
-    return sorted(((query_vector.cosine_similarity(self._index2[doc]), doc) for doc in candidates), reverse=True)[:k]
+    return sorted(((query_vector.cosine_similarity(self._vectors[doc]), doc) for doc in candidates), reverse=True)[:k]
 
   def tf(self, term, doc):
     """ Returns the count of :param term: in :param doc: """
