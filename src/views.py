@@ -3,6 +3,8 @@ from twitter_utils import hard_data
 import search_engine
 import os
 import json
+from collections import Counter, defaultdict
+import numpy
 app = Flask(__name__)
 s_engine = search_engine.main()
 
@@ -19,11 +21,18 @@ def analyze():
     if request.method == "POST":
         similarity = s_engine.query(request.form['query'])
         to_client = []
+        averages = defaultdict(list)
         for score in similarity:
             file = os.path.split(score[1])
             folder = os.path.split(file[0])
             to_client.append({"industry": folder[1], "user": file[1].strip(".csv"), "score": score[0]})
+            averages[folder[1]].append(score[0])
 
+        # NOTE this doesn't take the average score over all the people in a particular industry, but
+        # rather the average of the people in the industry that matched your query
+        for industry, values in averages.iteritems():
+            to_client.append({"industry": industry, "user": "average", "score" :numpy.average(values)})
+            
         return json.dumps(to_client)
     else:
         return render_template('analyze.html', analyze_active="active")
