@@ -4,7 +4,7 @@ import re
 import pprint
 import operator
 import os
-from math import sqrt
+from math import sqrt, log
 
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -19,7 +19,13 @@ class Vector(Counter):
   def build_from_list(self, lst):
     for w in lst: 
       self[w] += 1.0
-    
+
+  def build_tf_idf(self, query, index):
+    self.build_from_query(query)
+
+    for term in self.iterkeys():
+      self[term] *= index.idf(term)
+
   def dot_product(self, other):
     v1, v2 = self, other
     keys = set(v1.keys()) | set(v2.keys())
@@ -32,8 +38,6 @@ class Vector(Counter):
     except ZeroDivisionError:
       return 0
       
-    
-
   def __div__(self, c):
     try:
       return Vector((key, value/c) for (key,value) in self.iteritems())
@@ -56,23 +60,46 @@ class ForwardIndex(BaseIndex):
   
   def __init__(self):
       self._index = defaultdict(Vector)
+      self._index2 = defaultdict(Vector)
 
   def build(self, fnames):
     for fname in fnames:
       with open(fname, 'r') as f:
         for line in f:
           words = tokenize(line)
-          for w in words:
+          for w in words[1:]:
             self._index[fname][w] += 1.0
+
+    for fname in self._index.iterkeys():
+      for w in self._index[fname]:
+        self._index2[fname][w] = self.tf_idf(w, fname)
 
   def query(self, query, candidates=None, k=10):
     query_vector = Vector()
-    query_vector.build_from_query(query)
+    query_vector.build_tf_idf(query, self)
     
     if candidates is None:
-      candidates = self._index.iterkeys()
+      candidates = self._index2.iterkeys()
 
-    return sorted(((query_vector.cosine_similarity(self._index[doc]), doc) for doc in candidates), reverse=True)[:k]
+    return sorted(((query_vector.cosine_similarity(self._index2[doc]), doc) for doc in candidates), reverse=True)[:k]
+
+  def tf(self, term, doc):
+    """ Returns the count of :param term: in :param doc: """
+    return max(self._index[doc][term], 1.0)
+    
+    
+  def number_documents(self):
+    """ Returns the total number of documents stored in the index"""
+    return len(self._index)
+
+  def idf(self, term):
+    """ Returns inverse-document-frequency of a given term """
+    return self.number_documents()/max(1.0, sum(float(term in self._index[doc]) for doc in self._index.iterkeys()))
+
+  def tf_idf(self, term, doc):
+    """ Returns the tf_idf score for :param term: and :param doc:"""
+    return self.tf(term, doc)*log(self.idf(term))
+
 
 class InvertedIndex(BaseIndex):
   
@@ -83,19 +110,21 @@ class InvertedIndex(BaseIndex):
     for fname in fnames:
       with open(fname, 'r') as f:
         for line in f:
-          words = tokenize(line.strip())
-          for w in words:
+          words = tokenize(line)
+          for w in words[1:]:
             self._index[w].add(fname)
 
   
   def candidates(self, query):
     words = tokenize(query)
-    candidates = set(self._index[words[0]]) # this needs to be a COPY of the list, or else we'll overwrite previous values
+    
+    # this needs to be a COPY of the list, or else we'll overwrite previous values
+    candidates = set(self._index[words[0]]) if words else set() 
     for w in words:
-      candidates |= self._index[w]          # let a candidate be a document with at least one of the query terms, we'll get better results this way
+      # let a candidate be a document with at least one of the query terms, we'll get better results this way
+      candidates |= self._index[w]          
     return [c for c in candidates]
-      
-
+    
 
 
 class SearchEngine(object):
