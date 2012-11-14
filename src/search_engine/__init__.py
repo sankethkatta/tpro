@@ -4,6 +4,7 @@ import re
 import pprint
 import operator
 import os
+import pickle
 from math import sqrt, log
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -94,11 +95,11 @@ class ForwardIndex(BaseIndex):
 
   def idf(self, term):
     """ Returns inverse-document-frequency of a given term """
-    return log(self.number_documents()/max(1.0, sum(float(term in self._index[doc]) for doc in self._index.iterkeys())))
+    return self.number_documents()/max(1.0, sum(float(term in self._index[doc]) for doc in self._index.iterkeys()))
 
   def tf_idf(self, term, doc):
     """ Returns the tf_idf score for :param term: and :param doc:"""
-    return self.tf(term, doc)*self.idf(term)
+    return self.tf(term, doc)*log(self.idf(term))
 
 
 class InvertedIndex(BaseIndex):
@@ -135,22 +136,38 @@ class SearchEngine(object):
   def build(self, fnames):
     self.forward_index.build(fnames)
     self.inverted_index.build(fnames)
-    
-    
-
 
   def query(self, query, k=10):
     candidates = self.inverted_index.candidates(query)
     return self.forward_index.query(query, candidates=candidates, k=k)
     
 def main():
-  search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
+
   DATA_DIRECTORY = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'data')
+  path_to_pickle = os.path.join(DATA_DIRECTORY, 'search_engine.data')
+  # attempt to find pickled search engine
+  try:
+    with open(path_to_pickle, 'r') as f:
+      search_engine = pickle.load(f)
+      print "Search engine loaded from pickle"
+      return search_engine
+  except IOError:
+    pass
+
+  print "Building the search engine"
+  # build the search engine the normal way
+  search_engine = SearchEngine(ForwardIndex(), InvertedIndex())
+  
   section_folders = [os.path.join(DATA_DIRECTORY, dname) for dname in os.listdir(DATA_DIRECTORY)]
   data_folder = []
   for folder in section_folders:
     data_folder.extend([os.path.join(folder, fname) for fname in os.listdir(folder)])
   search_engine.build(data_folder)
+
+  # save a pickled copy of the search engine in a data file
+  with open(path_to_pickle, 'wb') as f:
+    pickle.dump(search_engine, f)
+  
   return search_engine
     
 if __name__ == '__main__':
