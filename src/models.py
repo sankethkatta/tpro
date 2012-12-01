@@ -11,11 +11,20 @@ db = SQLAlchemy(app)
 INDUSTRIES = dict(
     politics=["whitehouse", "KarlRove", "SenJohnMcCain", "nprpolitics", 
               "SpeakerBoehner", "chavezcadanga", "thehill", "johnboehner", 
-              "GStephanopoulos", "JimDeMint", 'BarackObama'],
+              "GStephanopoulos", "JimDeMint", 'BarackObama'
+    ],
 
     sports=["espn", "KingJames", "mcuban", "DwyaneWade", "WojYahooNBA",
             "SInow", "drewbrees", "MichelleDBeadle", "darrenrovell", 
-            "JayGlazer"],
+            "JayGlazer"
+    ],
+    movies=["Sony Pictures", "Universal Pictures", "LIONSGATE MOVIES",
+            "Michael Keck", "Miramax", "foxsearchlight", "Yahoo! Movies",
+            "Peter Sciretta", "Hollywood Reporter", "Helen O'Hara"
+    ],
+    health=["Health Magazine", "NYTimes Health", "NBC News Health", 
+            "CBS News Health", "CDC_eHealth"
+    ],
 
 )
 
