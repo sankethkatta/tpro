@@ -17,6 +17,14 @@ INDUSTRIES = dict(
             "SInow", "drewbrees", "MichelleDBeadle", "darrenrovell", 
             "JayGlazer"],
 
+    music=["ladygaga", "pitchforkmedia". "questlove", "coldplay", "GreenDay", "thekillers", "RollingStone", "Ludacris", "Eminem",
+    "rihanna", "justinbieber", "katyperry", "jason_mraz", "kanyewest"], 
+
+    food=["Foodimentary", "Rick_Bayless", "TylerFlorence", "FoodNetwork", 
+        "seriouseats", "LATimesfood", "steamykitchen", 'ChefChiarello', 
+        'ruthreichl', 'NoReservations']
+        
+
 )
 
 class BaseModel(db.Model):
