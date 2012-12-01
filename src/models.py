@@ -11,7 +11,8 @@ db = SQLAlchemy(app)
 INDUSTRIES = dict(
     politics=["whitehouse", "KarlRove", "SenJohnMcCain", "nprpolitics", 
               "SpeakerBoehner", "chavezcadanga", "thehill", "johnboehner", 
-              "GStephanopoulos", "JimDeMint", 'BarackObama'
+              "GStephanopoulos", "JimDeMint", 'HHShkMohd', 
+              'BarackObama', 'QueenRania', 'ShashiTharoor', 'KRuddMP', 'CoryBooker'
     ],
 
     sports=["espn", "KingJames", "mcuban", "DwyaneWade", "WojYahooNBA",
@@ -49,7 +50,18 @@ INDUSTRIES = dict(
         "TwitterFashion"
     ],
 
-     
+    religion =['onfaith', 'dalailama', 'JoelOsteen', 'yahya_ibrahim', 'DanielLapin', 
+    'judahsmith', 'CSLewis', 'DeepakChopra', 
+    'JoyceMeyer', 'RabbiYonah', 'EbooPatel', 'KayArthur', 'twitterreligion'],
+
+    philanthropy=['melindagates', 'SomalyMam', 'dosomething', 'hrw', 'SavetheChildren', 
+    'Water', 'Kiva', 'changemakers', 'WWF', 'Ashoka', 'Refugees', 'gatesfoundation', 
+    'CARE', 'LiteracyBridge', 'rotary', 'LIVESTRONGCEO' ], 
+
+    television = ['DannyDeVito', 'kenjeong', 'sela_ward', 'KaleyCuoco', 'ZooeyDeschanel', 'BRUCKHEIMERJB',
+    'DannyZuker', 'WhitneyCummings', 'ericstonestreet', 'evalaruecappoo', 'PhilKeoghan',
+    'Y_Strahovski', 'wayansjr', 'THEsaragilbert', 'PatriciaHeaton',
+     'kunalnayyar', 'duplaselton', 'GordonRamsay01', 'twittertv', 'bjnovak', 'ZacharyLevi']     
 
 )
 
