@@ -16,10 +16,10 @@ max_id = None
 total = 0
 
 for i in xrange(0, 504):
+    print "User: %s, Index: %d" % (users[i], i)
     while True:
         statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
         total = total + len(statuses)
-        print total
         for s in statuses:
             data.append(s)
             max_id = s.id
@@ -34,6 +34,5 @@ for i in xrange(0, 504):
         writer = csv.writer(f)
         for status in data:
             count = count + 1
-            print "User: %s, Index: %d" % (users[i], i)
             statusText = status.text.encode('ascii', 'ignore')
             writer.writerow([users[i], statusText])
