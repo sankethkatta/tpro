@@ -37,3 +37,8 @@
 .professionals_list a:hover {
     text-decoration: none;
 }
+
+.header {
+    background: url("../img/header_image_blurred.png") 100% 100%;
+
+}

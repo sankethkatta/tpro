@@ -35,35 +35,10 @@
             </tbody>
         </table>
 
-        <script type="text/javascript">
-            var button = $("#tweetinput button");
-            var tbody = $("#resultTable tbody");
+        <div id="circles"></div>
 
-            $("#tweetinput").submit(function(e) {
-                e.preventDefault();
-                var query = $(this).serialize();
-                button.attr("disabled", "disabled");
-                button.html("Analyzing...");
-
-                $.ajax({
-                    url: "/analyze",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: query
-                }).done(function(data) {
-                   buildTable(data); 
-                });
-            });
-
-            var buildTable = function(data) {
-                button.removeAttr("disabled");
-                button.html("Analyze");
-                tbody.children().remove()
-                for (i = 0; i < data.length; i++) {
-                   tbody.append("<tr><td>"+data[i].industry+"</td><td>"+data[i].user+"</td><td>"+data[i].score+"</td></tr>");
-                };
-            };
-        </script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v2.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/analyze.js') }}"></script>
     </div><!--/span12-->
   </div><!--/row-->
 </div><!--/container-->

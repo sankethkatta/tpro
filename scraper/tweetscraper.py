@@ -33,14 +33,12 @@ with open(csvFileName, 'wb') as f:
     for status in data:
         count = count + 1
         print count
-        statusText = status.text.lower()
-        statusText = statusText.encode('ascii', 'ignore')
+        #statusText = status.text.lower()
+        statusText = status.text.encode('ascii', 'ignore')
         #remove punctuation
-        statusText = statusText.translate(string.maketrans("", ""), string.punctuation)
+        #statusText = statusText.translate(string.maketrans("", ""), string.punctuation)
         #split status into individual words
-        splitStatus = statusText.split(" ")
+        #splitStatus = statusText.split(" ")
         #remove mention of RT
-        splitStatus = filter(lambda word: word != "rt", splitStatus)
-        for word in splitStatus:
-            if "http" not in word and word != " ": #remove mentions of links
-                writer.writerow([usernameToAcquireTweets, word])
+        #splitStatus = filter(lambda word: word != "rt", splitStatus)
+        writer.writerow([usernameToAcquireTweets, statusText])
