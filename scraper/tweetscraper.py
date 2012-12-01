@@ -15,7 +15,7 @@ data = []
 max_id = None
 total = 0
 
-for i in xrange(0, 504):
+for i in xrange(388, 504):
     print "User: %s, Index: %d" % (users[i], i)
     while True:
         statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
