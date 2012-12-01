@@ -60,6 +60,12 @@ INDUSTRIES = dict(
         "JeffBooth", "zappos", "MarketWatch", "garyvee", "FortuneMagazine", 
         "todsacerdoti", "FinancialTimes"
     ]
+    science=[
+        "sciam", "Astro_Nicole", "drkiki", "digg_sciences", "Astro_Mike", "pzmyers",
+        "bengoldacre", "Astro_Soichi", "apod", "NSF", "NASAHurricane", "bbcscitech",
+        "NASA", "science", "CERN", "NASAJPL", "smithsonian", "EQTW", "NASAKepler",
+    ]
+
 
 
      
