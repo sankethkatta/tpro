@@ -18,7 +18,7 @@ INDUSTRIES = dict(
             "SInow", "drewbrees", "MichelleDBeadle", "darrenrovell", 
             "JayGlazer"
     ],
-    movies=["Sony Pictures", "Universal Pictures", "LIONSGATE MOVIES",
+    entertainment=["Sony Pictures", "Universal Pictures", "LIONSGATE MOVIES",
             "Michael Keck", "Miramax", "foxsearchlight", "Yahoo! Movies",
             "Peter Sciretta", "Hollywood Reporter", "Helen O'Hara"
     ],
@@ -31,8 +31,25 @@ INDUSTRIES = dict(
 
     food=["Foodimentary", "Rick_Bayless", "TylerFlorence", "FoodNetwork", 
         "seriouseats", "LATimesfood", "steamykitchen", 'ChefChiarello', 
-        'ruthreichl', 'NoReservations']
-        
+        'ruthreichl', 'NoReservations'],
+    technology=[
+        "ForbesTech", "RWW", "chadfowler", "TechCrunch", "cultofmac", "SteveCase",
+        "biz", "kevinrose", "twitter", "gadgetlab", "google", "facebook", 
+        "davemorin", "Padmasree", "bgurley"
+    ],
+    funny=[
+        "CollegeTownLife", "RayWJ", "BillCosby", "EugeneMirman", "Jenna_Marbles",
+        "cracked", "TheAwkwardTweet", "charliesheen", "ActuallyNPH", "rickygervais",
+        "galifianakisz", "louisck", "azizansari", "DannyDeVito"
+    ],
+    fashion=[
+        "VictoriasSecret", "heidiklum", "MrJayManuel", "cmbenz", "Refinery29", "hm",
+        "ninagarcia", "TOMS", "bryanboy", "BrooklynDecker", "juneAmbrose", 
+        "voguemagazine", "beautylish", "MirandaKerr", "VanityFair", "lululemon",
+        "TwitterFashion"
+    ],
+
+     
 
 )
 
