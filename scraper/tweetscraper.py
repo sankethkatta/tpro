@@ -2,7 +2,8 @@ import twitter
 import csv
 import string
 import sys
-
+from topusers import users
+import os
 # This script gets all public tweets(including retweets) of a user.
 # To run this: python tweetscraper.py <username>
 # You will find a csv with a tokenized list of tweets in username.csv
@@ -13,32 +14,26 @@ api = twitter.Api(consumer_key = '723w730Htbdk4pgyb2sdEA',
 data = []
 max_id = None
 total = 0
-usernameToAcquireTweets =  sys.argv[1]
-while True:
-    statuses = api.GetUserTimeline(usernameToAcquireTweets, count = 200, max_id = max_id, include_rts = True)
-    total = total + len(statuses)
-    print total
-    for s in statuses:
-        data.append(s)
-        max_id = s.id
-    if len(statuses) == 0:
-        break
-    max_id = max_id - 1
 
-#writes to a csv
-csvFileName = usernameToAcquireTweets + ".csv"
-count = 0
-with open(csvFileName, 'wb') as f:
-    writer = csv.writer(f)
-    for status in data:
-        count = count + 1
-        print count
-        #statusText = status.text.lower()
-        statusText = status.text.encode('ascii', 'ignore')
-        #remove punctuation
-        #statusText = statusText.translate(string.maketrans("", ""), string.punctuation)
-        #split status into individual words
-        #splitStatus = statusText.split(" ")
-        #remove mention of RT
-        #splitStatus = filter(lambda word: word != "rt", splitStatus)
-        writer.writerow([usernameToAcquireTweets, statusText])
+for i in xrange(0, 504):
+    while True:
+        statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
+        total = total + len(statuses)
+        print total
+        for s in statuses:
+            data.append(s)
+            max_id = s.id
+        if len(statuses) == 0:
+            break
+        max_id = max_id - 1
+
+    #writes to a csv
+    csvFileName = os.path.join('topuserstweets', users[i] + ".csv")
+    count = 0
+    with open(csvFileName, 'wb') as f:
+        writer = csv.writer(f)
+        for status in data:
+            count = count + 1
+            print "User: %s, Index: %d" % (users[i], i)
+            statusText = status.text.encode('ascii', 'ignore')
+            writer.writerow([users[i], statusText])
