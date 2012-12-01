@@ -12,6 +12,7 @@ import argparse
 import json
 import nltk
 import nltk.corpus as corpus
+import random
 
 # attempt to load secret keys from json file
 # in our repo, we will not have this actual file
@@ -82,25 +83,22 @@ class TwitterScraper(TwitterApplication):
     TwitterApplication.__init__(self, **kwargs)
     self.users_to_scrape = deque(kwargs.get('users_to_scrape', ['justinbieber', 'obama']))
 
-  def scrape(self):
-    with open('scraper_data.csv', 'w') as f:
-
-      while True:
-        # pop the first user off the stack
-        username = self.users_to_scrape.pop()
-        # push them to the end of the stack
-        self.users_to_scrape.appendleft(username)
-        print self.users_to_scrape
+  def scrape(self, username='barackobama'):
+    with open('%s.csv' % username, 'wb') as f:
 
         for status in Cursor(self.api.user_timeline, id=username, count=10000).items():
-          print status.text
-          for w in self.tokenize(status.text):
-            val = ('{username},{w}\n'.format(username=username, w=w))
+          val = ('{username},{status}\n'.format(username=username, status=status.text.encode('ascii', 'ignore')))
+          f.write(val)
+          time.sleep(random.random()*3)
+
 
       
 if __name__ == '__main__':
   app = TwitterScraper()
-  app.scrape()
+  try:
+      app.scrape(sys.argv[1])
+  except:
+      app.scrape()    
 
 
 
