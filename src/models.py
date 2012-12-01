@@ -49,6 +49,19 @@ INDUSTRIES = dict(
         "voguemagazine", "beautylish", "MirandaKerr", "VanityFair", "lululemon",
         "TwitterFashion"
     ],
+    family=[
+        "momfluential", "thebump", "RealSimple", "ToysRUs", "Todaysparent", 
+        "TheBloggess", "singlemommyhood", "supernanny_com", "butterflymoms", 
+        "playgrounddad", "ICanGrowPeople", "parentsmagazine", "TheMommyologist",
+        "sesamestreet", "DailyParentTip", "parenthacks",
+    ],
+    business=[
+        "ev", "realDonaldTrump", "ramseyshow", "johnolilly", "Reuters_Biz",
+        "StephenRCovey", "Forbes", "demandrichard", "anandmahindra", "themotleyfool",
+        "JeffBooth", "zappos", "MarketWatch", "garyvee", "FortuneMagazine", 
+        "todsacerdoti", "FinancialTimes"
+    ]
+
 
     religion =['onfaith', 'dalailama', 'JoelOsteen', 'yahya_ibrahim', 'DanielLapin', 
     'judahsmith', 'CSLewis', 'DeepakChopra', 
@@ -167,7 +180,7 @@ if __name__ == '__main__':
     for industry, users in INDUSTRIES.iteritems():
         for username in users:
             try:
-                import_csv_file(industry, '%s.csv' % username)
+                import_csv_file(industry, '%s.csv' % username.lower())
             except Exception as err:
                 print err
 
