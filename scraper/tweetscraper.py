@@ -54,7 +54,7 @@ def ROLL_KEY():
 ROLL_KEY()
 
 users = [username.lower() for username in users]
-for i in xrange(336, 500):
+for i in xrange(362, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
