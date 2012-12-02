@@ -13,14 +13,12 @@ api = twitter.Api(consumer_key = '723w730Htbdk4pgyb2sdEA',
                    access_token_secret = '4a1IA9Y0mRZs6a5CHmsFtyNw4T37xc9rgHv1Tht2UbM')
 
 users = [username.lower() for username in users]
-total = 0
-for i in xrange(len(users)):
+for i in xrange(36, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
     while True:
         statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
-        total = total + len(statuses)
         for s in statuses:
             data.append(s)
             max_id = s.id
