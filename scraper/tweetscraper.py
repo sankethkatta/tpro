@@ -42,7 +42,12 @@ API_KEYS = [
     dict(consumer_key = 'WoD9ZEJQ3W6t3IuNGO5tg',
          consumer_secret = '3aLxtwK8Vn2jxji1yrdzCKfNZ0vZFlwwMiQgtGWSIaY',
          access_token_key = '18520837-xHRE0KuG67MDWhCQeKQliHdGtuyI0Ahfz8I4fpFPk',
-         access_token_secret = 'OFvGTCa7g1ftjrkjMeWtaAqHgW67MftNmuYArSXAs8')
+         access_token_secret = 'OFvGTCa7g1ftjrkjMeWtaAqHgW67MftNmuYArSXAs8'),
+
+    dict(consumer_key = 'iegvJ0Fk7saiSi2keoVyg',
+         consumer_secret = 'BCpU5IWJrUcsFONXqVuZkGeboceHxmfd8fymilCs',
+         access_token_key = '985298258-XrR0gWhjujENEHE0dQ5UgYL4hL1twcl05cxHJXEd',
+         access_token_secret = '9UUyQaC7cCBcM81ipuKNNA3ftz3WuwmrdMwG5B3SUA')
 ]
 
 CUR_KEY = -1
@@ -65,7 +70,7 @@ ROLL_KEY()
 
 users = [username.lower() for username in users]
 #failed indices: 381, 504, 583, 625
-for i in xrange(739, len(users)):
+for i in xrange(804, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
