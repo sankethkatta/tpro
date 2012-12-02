@@ -33,9 +33,19 @@ API_KEYS = [
          consumer_secret = '6lrR70b4dxzzOtyjmyxv2BM6KVYqaM0B9gPZmWhsM',
          access_token_key = '984391231-PISPNFog2eV6vijsvypY7a5K0P8g0LwU0oSFoYY4',
          access_token_secret = 'cCYfpfGhAP7UTwbu2vZutvWRl1m53BgX6GchVfQEJs'),
+
+    dict(consumer_key = '1Ie2twFjgCBgXHN0exqt0w',
+         consumer_secret = 'p9twG27V1jwIghnwvZjTJjv4vqvPyxPOw5eYwX9n6c',
+         access_token_key = '18520837-AvWGTxxRABDYVkRZnXW3hBKkwPuJZvgKlm8gj5Qiy',
+         access_token_secret = '0retdPbMjUCT6SLJcTyH1ZABb8W0e1mTB2eoO5zULY'),
+
+    dict(consumer_key = 'WoD9ZEJQ3W6t3IuNGO5tg',
+         consumer_secret = '3aLxtwK8Vn2jxji1yrdzCKfNZ0vZFlwwMiQgtGWSIaY',
+         access_token_key = '18520837-xHRE0KuG67MDWhCQeKQliHdGtuyI0Ahfz8I4fpFPk',
+         access_token_secret = 'OFvGTCa7g1ftjrkjMeWtaAqHgW67MftNmuYArSXAs8')
 ]
 
-CUR_KEY = -1 
+CUR_KEY = -1
 NUM_ROLLS = 0
 api = None
 def ROLL_KEY():
@@ -54,7 +64,8 @@ def ROLL_KEY():
 ROLL_KEY()
 
 users = [username.lower() for username in users]
-for i in xrange(362, len(users)):
+#failed indices: 381, 504
+for i in xrange(505, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
