@@ -7,13 +7,13 @@ import os
 # This script gets all public tweets(including retweets) of a user.
 # To run this: python tweetscraper.py <username>
 # You will find a csv with a tokenized list of tweets in username.csv
-api = twitter.Api(consumer_key = '723w730Htbdk4pgyb2sdEA',
-                   consumer_secret='wk6CoLNX2SxxZNWvlnaDYocmp6AUtQqTUVzGC1eKlEg',
-                   access_token_key = '20957704-icOHaCW6yqxJmUSamU9qMZI7t9kirpMYWKC9Ck0o',
-                   access_token_secret = '4a1IA9Y0mRZs6a5CHmsFtyNw4T37xc9rgHv1Tht2UbM')
+api = twitter.Api(consumer_key = '7i7MFfbiHCP4E7i1l9S2g',
+                   consumer_secret='jGwDVgkdFu7GZIntPnyBq7wSgtTurtlYwvXAfRbxCPY',
+                   access_token_key = '15202847-lOjmNyFbxjImFOESPjGDue7mVgYuy9868Aghzurw',
+                   access_token_secret = 'XK0wDtdYfTW77bKv8RuQD1lqXuVpilaYCoEZ3YohUA')
 
 users = [username.lower() for username in users]
-for i in xrange(36, len(users)):
+for i in xrange(80, 500):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
