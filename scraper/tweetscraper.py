@@ -11,12 +11,12 @@ api = twitter.Api(consumer_key = '723w730Htbdk4pgyb2sdEA',
                    consumer_secret='wk6CoLNX2SxxZNWvlnaDYocmp6AUtQqTUVzGC1eKlEg',
                    access_token_key = '20957704-icOHaCW6yqxJmUSamU9qMZI7t9kirpMYWKC9Ck0o',
                    access_token_secret = '4a1IA9Y0mRZs6a5CHmsFtyNw4T37xc9rgHv1Tht2UbM')
-data = []
-max_id = None
-total = 0
 
-for i in xrange(388, 504):
+total = 0
+for i in xrange(len(users)):
     print "User: %s, Index: %d" % (users[i], i)
+    data = []
+    max_id=None
     while True:
         statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
         total = total + len(statuses)
@@ -28,7 +28,7 @@ for i in xrange(388, 504):
         max_id = max_id - 1
 
     #writes to a csv
-    csvFileName = os.path.join('topuserstweets', users[i] + ".csv")
+    csvFileName = os.path.join('topuserstweets2', users[i] + ".csv")
     count = 0
     with open(csvFileName, 'wb') as f:
         writer = csv.writer(f)
