@@ -60,6 +60,13 @@ class User(object):
         else:
             print "user already exists"
 
+    @staticmethod
+    def similar_documents(document, k=10):
+        tokens = tokenize(document)
+        vector = Vector(document)
+        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
+        return results
+
 def tokenize(s):
     return [stem(w) for w in re.findall('\w+', s.lower()) if w not in stopwords]
 
