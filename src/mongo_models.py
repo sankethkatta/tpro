@@ -23,6 +23,8 @@ connection = pymongo.MongoClient('localhost', 27017)
 ##  }
 ##
 ###########################
+
+
 class User(object):
     
     db = connection.tpro
@@ -34,7 +36,14 @@ class User(object):
        if user:
            user['features'] = Vector(user.get('features', {}))
        return user
-       
+
+    @staticmethod
+    def all():
+        users = list(User.users.find())
+        for user in users:
+            user['features'] = Vector(user['features'])
+        return users
+
     @staticmethod
     def users_containing_terms(terms):
         conditions = {"$or" : [ {'features.%s' % term : {"$gt": 0}} for term in terms]}
@@ -63,7 +72,8 @@ class User(object):
     @staticmethod
     def similar_documents(document, k=10):
         tokens = tokenize(document)
-        vector = Vector(document)
+        vector = Vector(tokens)
+        print vector
         results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
         return results
 

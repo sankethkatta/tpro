@@ -23,6 +23,7 @@ def analyze():
     if request.method == "POST":
         #similarity = s_engine.query(request.form['query'])
         query = request.form['query']
+        print query
         results = User.similar_documents(query)
         to_client = []
         averages = defaultdict(list)
