@@ -44,11 +44,21 @@ class User(object):
         return users
 
     @staticmethod
+    def contains(username):
+        match = User.users.find_one({ "username": username })
+        return match is not None
+
+
+    @staticmethod
     def insert(users):
-        conditions = { "$or": [{ "username": user['username']} for user in users] }
-        matching_usernames = User.users.find(conditions)
+        conditions = { "$or": [{ "username": u['username'] } for u in users] }
+        matching_usernames = set(user['username'] for user in User.users.find(conditions))
         users = [user for user in users if user['username'] not in matching_usernames]
-        return User.users.insert(users)
+        if users:
+            print "entering a new user"
+            return User.users.insert(users)
+        else:
+            print "user already exists"
 
 def tokenize(s):
     return [stem(w) for w in re.findall('\w+', s.lower()) if w not in stopwords]
@@ -59,20 +69,27 @@ def import_csv_data():
                      for fname in os.listdir(data_directory)]
     csv_filenames = [fname for fname in csv_filenames if fname.endswith('.csv')]
 
-    users = []
+    idx = 0
     for csv_fname in csv_filenames:
         with open(csv_fname, 'rb') as f:
             reader = csv.reader(f)
             features = Vector()
-            user = { 'tweets': []}
+            user = { 'username': '', 'tweets': []}
             for username, tweet in reader:
+                # don't process a csv file if we've already added them to the db
+                if User.contains(username):
+                    print "already processed %s" % username
+                    break
                 if not user.get('username'):
                     user['username'] = username
                 for token in tokenize(tweet):
                     features[token] += 1
                 user['tweets'].append(tweet)
             user['features'] = features
-            users.append(users)
+            if user['username'] and user['features'] and user['tweets']:
+                User.insert([user])
+                idx += 1
+                print "username: %s, index: %s" % (username, idx)
 if __name__ == '__main__':
     import_csv_data()
 
