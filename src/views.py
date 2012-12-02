@@ -5,8 +5,10 @@ import os
 import json
 from collections import Counter, defaultdict
 import numpy
+from mongo_models import *
+
 app = Flask(__name__)
-s_engine = search_engine.main()
+#s_engine = search_engine.main()
 
 @app.route('/')
 def index():
@@ -19,19 +21,13 @@ def index():
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == "POST":
-        similarity = s_engine.query(request.form['query'])
+        #similarity = s_engine.query(request.form['query'])
+        query = request.form['query']
+        results = User.similar_documents(query)
         to_client = []
         averages = defaultdict(list)
-        for score in similarity:
-            file = os.path.split(score[1])
-            folder = os.path.split(file[0])
-            to_client.append({"industry": folder[1], "user": file[1].strip(".csv"), "score": score[0]})
-            averages[folder[1]].append(score[0])
-
-        # NOTE this doesn't take the average score over all the people in a particular industry, but
-        # rather the average of the people in the industry that matched your query
-        for industry, values in averages.iteritems():
-            to_client.append({"industry": industry, "user": "average", "score" :numpy.average(values)})
+        for score, username in results:
+            to_client.append({"industry": None, "user": username, "score": score})
             
         return json.dumps(to_client)
     else:
