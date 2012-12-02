@@ -64,15 +64,16 @@ def ROLL_KEY():
 ROLL_KEY()
 
 users = [username.lower() for username in users]
-#failed indices: 381, 504
-for i in xrange(583, len(users)):
+#failed indices: 381, 504, 583, 625
+for i in xrange(739, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
     while True:
         try:
             statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
-        except twitter.TwitterError:
+        except twitter.TwitterError as e:
+            print e
             ROLL_KEY()
             continue
 
