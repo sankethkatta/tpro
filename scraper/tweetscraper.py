@@ -28,22 +28,43 @@ API_KEYS = [
          consumer_secret = 'i1oMfcMz46wTUZXZNjfbJ5ukBkeASZcWg3Xxy2JlEVI',
          access_token_key = '984322344-TKU7vaGGjdO3yQWNSObXBhq6M1Qj2mFQqUcLWig0',
          access_token_secret = 'PzauR6sGzO0K5zNvREkpE0EZfFvW4ryQnnKK9Mm4Hc'),
+
+    dict(consumer_key = 'i8mfMI2Q55Vkl5Rm6yhzqA',
+         consumer_secret = '6lrR70b4dxzzOtyjmyxv2BM6KVYqaM0B9gPZmWhsM',
+         access_token_key = '984391231-PISPNFog2eV6vijsvypY7a5K0P8g0LwU0oSFoYY4',
+         access_token_secret = 'cCYfpfGhAP7UTwbu2vZutvWRl1m53BgX6GchVfQEJs'),
 ]
 
-CUR_KEY = 0 
+CUR_KEY = -1 
+NUM_ROLLS = 0
+api = None
+def ROLL_KEY():
+    global CUR_KEY, NUM_ROLLS, api
+    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS)
+    NUM_ROLLS += 1
 
-api = twitter.Api(consumer_key = API_KEYS[CUR_KEY]['consumer_key'],
-                   consumer_secret = API_KEYS[CUR_KEY]['consumer_secret'],
-                   access_token_key = API_KEYS[CUR_KEY]['access_token_key'],
-                   access_token_secret = API_KEYS[CUR_KEY]['access_token_secret'])
+    # break if we've rolled more than number of API_KEYS, so it doesn't get stuck in an infiniteloop
+    if NUM_ROLLS > len(API_KEYS):
+        sys.exit("ALL KEYS ARE RATE-LIMITED")
+    print "CUR_KEY: %d" % CUR_KEY
+    api = twitter.Api(consumer_key = API_KEYS[CUR_KEY]['consumer_key'],
+                       consumer_secret = API_KEYS[CUR_KEY]['consumer_secret'],
+                       access_token_key = API_KEYS[CUR_KEY]['access_token_key'],
+                       access_token_secret = API_KEYS[CUR_KEY]['access_token_secret'])
+ROLL_KEY()
 
 users = [username.lower() for username in users]
-for i in xrange(286, 500):
+for i in xrange(336, 500):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
     while True:
-        statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
+        try:
+            statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
+        except twitter.TwitterError:
+            ROLL_KEY()
+            continue
+
         for s in statuses:
             data.append(s)
             max_id = s.id
