@@ -40,7 +40,7 @@ INDUSTRIES = dict(
         "seriouseats", "LATimesfood", "steamykitchen", 'ChefChiarello', 
         'ruthreichl', 'NoReservations'],
     technology=[
-        "ForbesTech", "RWW", "chadfowler", "TechCrunch", "cultofmac", "SteveCase",
+        "ForbesTech", "anildash", "RWW", "chadfowler", "TechCrunch", "cultofmac", "SteveCase",
         "biz", "kevinrose", "twitter", "gadgetlab", "google", "facebook", 
         "davemorin", "Padmasree", "bgurley"
     ],
