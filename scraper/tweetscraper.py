@@ -69,8 +69,8 @@ def ROLL_KEY():
 ROLL_KEY()
 
 users = [username.lower() for username in users]
-#failed indices: 381, 504, 583, 625
-for i in xrange(804, len(users)):
+#failed indices: 381, 504, 583, 625, 897
+for i in xrange(898, len(users)):
     print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
