@@ -71,8 +71,13 @@ class User(object):
 
     @staticmethod
     def similar_documents(document, k=10):
-        tokens = tokenize(document)
-        vector = Vector(tokens)
+        user = User.get(document)
+        if user is not None:
+            vector = Vector(user['features'])
+            tokens = user['features'].keys()
+        else:
+            tokens = tokenize(document)
+            vector = Vector(tokens)
         print vector
         results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
         return results
