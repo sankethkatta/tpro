@@ -86,7 +86,7 @@ def tokenize(s):
     return [stem(w) for w in re.findall('\w+', s.lower()) if w not in stopwords]
 
 def import_csv_data():
-    data_directory = os.path.realpath(os.path.dirname(__file__)).replace('src', 'scraper/topuserstweets2')
+    data_directory = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'scraper/topuserstweets2')
     csv_filenames = [os.path.join(data_directory, fname) \
                      for fname in os.listdir(data_directory)]
     csv_filenames = [fname for fname in csv_filenames if fname.endswith('.csv')]
