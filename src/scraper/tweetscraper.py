@@ -4,9 +4,27 @@ import string
 import sys
 from topusers import users
 import os
+import pymongo
+import re
+import nltk
+from collections import Counter
+
+stopwords = set(nltk.corpus.stopwords.words('english'))
+stopwords.add("http")
+stopwords.add("rt")
+stopwords.add("co")
+
+def tokenize(s):
+    return [w for w in re.findall('\w+', s.lower()) if w not in stopwords]
+
+conn = pymongo.Connection()
+db = conn.tpro
+
 # This script gets all public tweets(including retweets) of a user.
 # To run this: python tweetscraper.py <username>
 # You will find a csv with a tokenized list of tweets in username.csv
+
+
 
 API_KEYS = [
     dict(consumer_key = 'N0D7AL9QKSivv5Ogrbunxg',
@@ -55,7 +73,7 @@ NUM_ROLLS = 0
 api = None
 def ROLL_KEY():
     global CUR_KEY, NUM_ROLLS, api
-    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS)
+    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS) + 2
     NUM_ROLLS += 1
 
     # break if we've rolled more than number of API_KEYS, so it doesn't get stuck in an infiniteloop
@@ -69,9 +87,37 @@ def ROLL_KEY():
 ROLL_KEY()
 
 users = [username.lower() for username in users]
+
+
+def scrape_user_timeline(username):
+    data = []
+    max_id = None
+
+ 
+    print "hello this line is before statuses"
+    print username
+    statuses = api.GetUserTimeline(username, count = 200, include_rts = True)
+    print "hello I'm past the call to the API"
+
+    for status in statuses:
+        print status.text, status.id
+        data.append(status.text)
+        max_id = status.id
+
+    if data:
+        user = {"username": username, "tweets":[], "features": Counter() }
+        for tweet in data:
+            user["tweets"].append(tweet)
+            for token in tokenize(tweet):
+                user["features"][token] += 1
+        print user
+        db.users.insert(user)
+            
+            
+def scrape_to_csv(users):
 #failed indices: 381, 504, 583, 625, 897, 912
-for i in xrange(1005, len(users)):
-    print "User: %s, Index: %d" % (users[i], i)
+    for i in xrange(1005, len(users)):
+        print "User: %s, Index: %d" % (users[i], i)
     data = []
     max_id=None
     while True:
@@ -98,3 +144,8 @@ for i in xrange(1005, len(users)):
             count = count + 1
             statusText = status.text.encode('ascii', 'ignore')
             writer.writerow([users[i], statusText])
+
+
+
+if __name__ == '__main_':
+    scrape_user_timeline("rturumella")
