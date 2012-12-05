@@ -124,7 +124,8 @@ def scrape_friends_timelines(username):
                 for token in tokenize(status_text):
                     friend_record["features"][token] += 1
             friend_records.append(friend_record)
-            db.users.update({"username": friend_record["username"]}, {"$set": {"friends": friend_record.get("friends", []), "features": friend_record["features"], "tweets": friend_record["tweets"]}})
+            db.users.insert(friend_record)
+            #db.users.update({"username": friend_record["username"]}, {"$set": {"friends": friend_record.get("friends", []), "features": friend_record["features"], "tweets": friend_record["tweets"]}})
     db.users.update({"username": user_record["username"]}, {"$set" : {"friends": user_record["friends"], "features": user_record["features"], "tweets": user_record["tweets"]}})
                 
 

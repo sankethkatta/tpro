@@ -7,6 +7,7 @@ import os
 import csv
 import re
 from pprint import pprint
+import scraper
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add('http')
@@ -72,13 +73,17 @@ class User(object):
     @staticmethod
     def similar_documents(document, k=10):
         user = User.get(document)
+        if user is None or not user.get("friends"):
+            scraper.scrape_user_timeline(document)
+            scraper.scrape_friends_timelines(document)
+            user = User.get(document)
+
         if user is not None:
-            friends = [User.get(uname) for uname in user["friends"]]
+            friends = [f for f in [User.get(uname) for uname in user["friends"]] if f]
             vector = reduce(lambda x, y: x+y, [Vector(f["features"]) for f in friends])
             tokens = user['features'].keys()
         else:
-            tokens = tokenize(document)
-            vector = Vector(tokens)
+            return []
         print vector
         results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
         return results
