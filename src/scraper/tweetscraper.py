@@ -73,7 +73,7 @@ NUM_ROLLS = 0
 api = None
 def ROLL_KEY():
     global CUR_KEY, NUM_ROLLS, api
-    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS) + 2
+    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS) + 1
     NUM_ROLLS += 1
 
     # break if we've rolled more than number of API_KEYS, so it doesn't get stuck in an infiniteloop
@@ -88,6 +88,45 @@ ROLL_KEY()
 
 users = [username.lower() for username in users]
 
+def scrape_friends_timelines(username):
+    #number_of_friends = api.GetUser(username).friends_count
+
+    user_record = db.users.find_one({"username":username})
+    if user_record is None:
+        scrape_user_timeline(username)
+        user_record = db.users.find_one({"username":username})
+    
+    if user_record.get("friends"):
+        return
+    else:
+        user_record["friends"] = []
+        
+    friends = api.GetFriends(user=username)
+    friend_records = []
+    for friend in friends:
+        friend_name = friend.screen_name.lower()
+        print friend_name
+        friend_record = db.users.find_one({"username":friend_name})
+        if not friend_record:
+            print "found a new friend"
+            friend_record = {"username": friend_name, "tweets":[], "features": Counter(), "friends": []}
+        else:
+            friend_record["features"] = Counter(friend_record["features"])
+        if not friend.protected:
+            user_record["friends"].append(friend_name)
+            try:
+                statuses = api.GetUserTimeline(friend.id, count=200, include_rts=True)
+            except twitter.TwitterError as e:
+                ROLL_KEY()
+            for status in statuses: 
+                status_text = status.text.encode('ascii', 'ignore')
+                friend_record["tweets"].append(status_text)
+                for token in tokenize(status_text):
+                    friend_record["features"][token] += 1
+            friend_records.append(friend_record)
+            db.users.update({"username": friend_record["username"]}, {"$set": {"friends": friend_record.get("friends", []), "features": friend_record["features"], "tweets": friend_record["tweets"]}})
+    db.users.update({"username": user_record["username"]}, {"$set" : {"friends": user_record["friends"], "features": user_record["features"], "tweets": user_record["tweets"]}})
+                
 
 def scrape_user_timeline(username):
     data = []
@@ -146,6 +185,6 @@ def scrape_to_csv(users):
             writer.writerow([users[i], statusText])
 
 
-
-if __name__ == '__main_':
-    scrape_user_timeline("rturumella")
+if __name__ == '__main__':
+    print "hellp"
+    scrape_friends_timelines("sankethkatta")
