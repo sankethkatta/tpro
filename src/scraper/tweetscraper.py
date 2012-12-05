@@ -102,31 +102,29 @@ def scrape_friends_timelines(username):
     else:
         user_record["friends"] = []
         
-    friends = list(api.GetFriends(user=username))[:50]
-    print len(friends)
+    friends = api.GetFriends(user=username)
     friend_records = []
     for friend in friends:
         friend_name = friend.screen_name.lower()
         print friend_name
         friend_record = db.users.find_one({"username":friend_name})
         if not friend_record:
-            print "found a new friend"
-            friend_record = {"username": friend_name, "tweets":[], "features": Counter(), "friends": []}
+            friend_record = {"username": friend_name, "features": Counter() }
         else:
             friend_record["features"] = Counter(friend_record["features"])
         if not friend.protected:
-            user_record["friends"].append(friend_name)
             try:
                 statuses = api.GetUserTimeline(friend.id, count=200, include_rts=True)
             except twitter.TwitterError as e:
                 ROLL_KEY()
             for status in statuses: 
                 status_text = status.text.encode('ascii', 'ignore')
-                friend_record["tweets"].append(status_text)
                 for token in tokenize(status_text):
                     friend_record["features"][token] += 1
             friend_records.append(friend_record)
-    return reduce(lambda x, y: x+y, [(f["features"]) for f in friend_records])
+    if friend_records:
+        return reduce(lambda x, y: x+y, [(f["features"]) for f in friend_records])
+    return Counter()
                 
 
 def scrape_user_timeline(username):
@@ -185,20 +183,19 @@ def scrape_to_csv(users):
             statusText = status.text.encode('ascii', 'ignore')
             writer.writerow([users[i], statusText])
 
-import cPickle
-try:
-    inverted_index = cPickle.loads(open("inverted_index.cpickle", "rb").read())
-    print "success"
-except:
-    print "exception error"
-    inverted_index = defaultdict(set)
-    all_users = db.users.find()
-    for user in all_users:
-        for token in user.get("features",{}).iterkeys():
-            inverted_index[token].add(user["username"])
-    cPickle.dump(inverted_index, open("inverted_index.cpickle", "wb"))
-    print "saved inverted_index"
+#import cPickle
+#try:
+#    inverted_index = cPickle.loads(open("inverted_index.cpickle", "rb").read())
+#    print "success"
+#except:
+#    print "exception error"
+#    inverted_index = defaultdict(set)
+#    all_users = db.users.find()
+#    for user in all_users:
+#        for token in user.get("features",{}).iterkeys():
+#            inverted_index[token].add(user["username"])
+#    cPickle.dump(inverted_index, open("inverted_index.cpickle", "wb"))
+#    print "saved inverted_index"
 
 if __name__ == '__main__':
-    print "hellp"
     scrape_friends_timelines("sankethkatta")

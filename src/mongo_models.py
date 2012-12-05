@@ -9,6 +9,8 @@ import re
 from pprint import pprint
 import scraper
 from time import time
+from collections import defaultdict
+import datetime
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add('http')
@@ -26,6 +28,7 @@ connection = pymongo.MongoClient('localhost', 27017)
 ##
 ###########################
 
+db = connection.tpro
 
 class User(object):
     
@@ -49,12 +52,18 @@ class User(object):
     @staticmethod
     def users_containing_terms(terms):
         START = time()
-        usernames = reduce(lambda x, y: x | y, (scraper.inverted_index[term] for term in terms))
-        users = [u for u in [User.get(uname) for uname in usernames] if u]
+        #records = db.inverted_index.find({ "$or" : [{ "term": term }  for term in terms]})
+        #inverted_index = dict((record["term"], set(record["usernames"])) for \
+        #    record in records)
+        #usernames = reduce(lambda x, y: x | y, (inverted_index.get(term, set()) for term in terms))
+        #users = (u for u in [User.get(uname) for uname in usernames] if u)
+        users = (u for u in db.users.find() if u.get("username"))
+        results = []
         for user in users:
             user["features"] = Vector(user.get('features', {}))
+            results.append(user)
         print "users_containing_terms: %s"  % (time() - START)
-        return users
+        return results
 
     @staticmethod
     def contains(username):
@@ -74,20 +83,60 @@ class User(object):
             print "user already exists"
 
     @staticmethod
-    def similar_documents(document, k=20):
+    def similar_documents(document, k=100):
+       
+        recommendation = db.recommendations.find_one({"username": document})
+        if recommendation:
+            print "found previously cached results"
+            created = recommendation.get('created')
+            # are the previously found results too old?
+            if not created or (datetime.datetime.utcnow()-created).days > 0:
+                # delete the outdated recommendation
+                db.recommendations.remove("results")
+            else:
+                results = recommendation.get("results")
+                return results[:k]
+
         user = User.get(document)
-        print user
-        vector = Vector(scraper.scrape_friends_timelines(document))
-        tokens = vector.keys()
+        if user:
+            # if they are a ground truth user, prove that our results are
+            # accurate when analyzing the similarity of their timeline to
+            # others in our database
+            print "analyzing ground truth"
+            vector = user["features"]
+        else:
+            # a new user has been entered, attempt to scrape their timeline
+            print "username entered is neither a ground truth nor has a prior record"
+            vector = Vector(scraper.scrape_friends_timelines(document))
+            tokens = vector.keys()
         print vector
-        users = User.users_containing_terms(tokens)
+        users = (u for u in db.users.find() if u.get("features"))
         START = time()
-        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in users], reverse=True)[:k]
+        results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
+        if results:
+            db.recommendations.insert({"username": document, "results": results, "created": datetime.datetime.utcnow()})
         print "cosine_similarity: %s" % (time() - START)
-        return results
+        return results[:k]
 
 def tokenize(s):
     return [stem(w) for w in re.findall('\w+', s.lower()) if w not in stopwords]
+
+def build_mongo_index():
+    users = db.users.find()
+    inverted_index = defaultdict(set)
+    for user in users:
+        if not user.get("username"):
+            continue
+        print user.get("username")
+        for token in user.get("features", {}).iterkeys():
+            inverted_index[token].add(user["username"])
+    records = [{"term":term, "usernames": list(usernames)} for term, usernames in inverted_index.iteritems()]
+    for record in records:
+        print "inserting record for %s" % record.get("term")
+        db.inverted_index.insert(record)
+            
+
+        
 
 def import_csv_data():
     data_directory = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'scraper/topuserstweets2')
@@ -117,7 +166,8 @@ def import_csv_data():
                 idx += 1
                 print "username: %s, index: %s" % (username, idx)
 if __name__ == '__main__':
-    import_csv_data()
+    #import_csv_data()
+    build_mongo_index()
 
        
             
