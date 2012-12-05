@@ -73,7 +73,8 @@ class User(object):
     def similar_documents(document, k=10):
         user = User.get(document)
         if user is not None:
-            vector = Vector(user['features'])
+            friends = [User.get(uname) for uname in user["friends"]]
+            vector = reduce(lambda x, y: x+y, [Vector(f["features"]) for f in friends])
             tokens = user['features'].keys()
         else:
             tokens = tokenize(document)

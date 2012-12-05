@@ -27,6 +27,9 @@ class Vector(Counter):
     for term in self.iterkeys():
       self[term] *= index.idf(term)
 
+  def __add__(self, other):
+      return Vector(Counter.__add__(self, other))
+
   def dot_product(self, other):
     v1, v2 = self, other
     keys = set(v1.keys()) | set(v2.keys())
