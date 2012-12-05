@@ -97,22 +97,15 @@ def scrape_friends_timelines(username):
         #scrape_user_timeline(username)
         user_record = { "username": username, "friends": [] }
     
-    if user_record.get("friends"):
-        return
-    else:
-        user_record["friends"] = []
-        
     friends = api.GetFriends(user=username)
-    friend_records = []
+    friend_features = Counter()
     for friend in friends:
         friend_name = friend.screen_name.lower()
         print friend_name
         friend_record = db.users.find_one({"username":friend_name})
-        if not friend_record:
-            friend_record = {"username": friend_name, "features": Counter() }
-        else:
-            friend_record["features"] = Counter(friend_record["features"])
-        if not friend.protected:
+        if friend_record and friend_record.get('features'):
+            friend_features += Counter(friend_record.get('features', {}))
+        elif not friend.protected:
             try:
                 statuses = api.GetUserTimeline(friend.id, count=200, include_rts=True)
             except twitter.TwitterError as e:
@@ -120,11 +113,8 @@ def scrape_friends_timelines(username):
             for status in statuses: 
                 status_text = status.text.encode('ascii', 'ignore')
                 for token in tokenize(status_text):
-                    friend_record["features"][token] += 1
-            friend_records.append(friend_record)
-    if friend_records:
-        return reduce(lambda x, y: x+y, [(f["features"]) for f in friend_records])
-    return Counter()
+                    friend_features[token] += 1
+    return friend_features
                 
 
 def scrape_user_timeline(username):
