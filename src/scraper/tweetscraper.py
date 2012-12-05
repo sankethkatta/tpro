@@ -7,7 +7,8 @@ import os
 import pymongo
 import re
 import nltk
-from collections import Counter
+from collections import Counter, defaultdict
+
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add("http")
@@ -91,17 +92,18 @@ users = [username.lower() for username in users]
 def scrape_friends_timelines(username):
     #number_of_friends = api.GetUser(username).friends_count
 
-    user_record = db.users.find_one({"username":username})
+    user_record = db.recommendations.find_one({"username":username})
     if user_record is None:
-        scrape_user_timeline(username)
-        user_record = db.users.find_one({"username":username})
+        #scrape_user_timeline(username)
+        user_record = { "username": username, "friends": [] }
     
     if user_record.get("friends"):
         return
     else:
         user_record["friends"] = []
         
-    friends = api.GetFriends(user=username)
+    friends = list(api.GetFriends(user=username))[:50]
+    print len(friends)
     friend_records = []
     for friend in friends:
         friend_name = friend.screen_name.lower()
@@ -124,9 +126,7 @@ def scrape_friends_timelines(username):
                 for token in tokenize(status_text):
                     friend_record["features"][token] += 1
             friend_records.append(friend_record)
-            db.users.insert(friend_record)
-            #db.users.update({"username": friend_record["username"]}, {"$set": {"friends": friend_record.get("friends", []), "features": friend_record["features"], "tweets": friend_record["tweets"]}})
-    db.users.update({"username": user_record["username"]}, {"$set" : {"friends": user_record["friends"], "features": user_record["features"], "tweets": user_record["tweets"]}})
+    return reduce(lambda x, y: x+y, [(f["features"]) for f in friend_records])
                 
 
 def scrape_user_timeline(username):
@@ -185,6 +185,19 @@ def scrape_to_csv(users):
             statusText = status.text.encode('ascii', 'ignore')
             writer.writerow([users[i], statusText])
 
+import cPickle
+try:
+    inverted_index = cPickle.loads(open("inverted_index.cpickle", "rb").read())
+    print "success"
+except:
+    print "exception error"
+    inverted_index = defaultdict(set)
+    all_users = db.users.find()
+    for user in all_users:
+        for token in user.get("features",{}).iterkeys():
+            inverted_index[token].add(user["username"])
+    cPickle.dump(inverted_index, open("inverted_index.cpickle", "wb"))
+    print "saved inverted_index"
 
 if __name__ == '__main__':
     print "hellp"

@@ -8,6 +8,7 @@ import csv
 import re
 from pprint import pprint
 import scraper
+from time import time
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add('http')
@@ -47,10 +48,12 @@ class User(object):
 
     @staticmethod
     def users_containing_terms(terms):
-        conditions = {"$or" : [ {'features.%s' % term : {"$gt": 0}} for term in terms]}
-        users = list(User.users.find(conditions))
+        START = time()
+        usernames = reduce(lambda x, y: x | y, (scraper.inverted_index[term] for term in terms))
+        users = [u for u in [User.get(uname) for uname in usernames] if u]
         for user in users:
-            user['features'] = Vector(user.get('features', {}))
+            user["features"] = Vector(user.get('features', {}))
+        print "users_containing_terms: %s"  % (time() - START)
         return users
 
     @staticmethod
@@ -71,21 +74,16 @@ class User(object):
             print "user already exists"
 
     @staticmethod
-    def similar_documents(document, k=10):
+    def similar_documents(document, k=20):
         user = User.get(document)
-        if user is None or not user.get("friends"):
-            scraper.scrape_user_timeline(document)
-            scraper.scrape_friends_timelines(document)
-            user = User.get(document)
-
-        if user is not None:
-            friends = [f for f in [User.get(uname) for uname in user["friends"]] if f]
-            vector = reduce(lambda x, y: x+y, [Vector(f["features"]) for f in friends])
-            tokens = user['features'].keys()
-        else:
-            return []
+        print user
+        vector = Vector(scraper.scrape_friends_timelines(document))
+        tokens = vector.keys()
         print vector
-        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
+        users = User.users_containing_terms(tokens)
+        START = time()
+        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in users], reverse=True)[:k]
+        print "cosine_similarity: %s" % (time() - START)
         return results
 
 def tokenize(s):
