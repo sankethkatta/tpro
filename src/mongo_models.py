@@ -112,11 +112,20 @@ class User(object):
         print vector
         users = (u for u in db.users.find() if u.get("features"))
         START = time()
+
+        pool = mp.Pool(5)
+        #results = pool.map(worker, ((vector, user) for user in users))
+        #results = sorted(results, reverse=True)
         results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
         if results:
             db.recommendations.insert({"username": document, "results": results, "created": datetime.datetime.utcnow()})
         print "cosine_similarity: %s" % (time() - START)
         return results[:k]
+
+import multiprocessing as mp
+def worker(args):
+    vector, user = args
+    return (vector.cosine_similarity(Vector(user['features'])), user['username'])
 
 def tokenize(s):
     return [stem(w) for w in re.findall('\w+', s.lower()) if w not in stopwords]
