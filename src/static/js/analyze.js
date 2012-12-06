@@ -1,4 +1,5 @@
 $("#tweetinput input").focus();
+var loading = $("#loading");
 var button = $("#tweetinput button");
 var result_list = $("#result_list");
 var template = function(user, img, bio) {
@@ -10,6 +11,7 @@ $("#tweetinput").submit(function(e) {
     var query = $(this).serialize();
     button.attr("disabled", "disabled");
     button.html("Analyzing...");
+    loading.css("display", "block");
 
     $.ajax({
         url: "/analyze",
@@ -21,6 +23,7 @@ $("#tweetinput").submit(function(e) {
        if (data.length === 0) {
 	  flashMessage();
 	} else {
+	   loading.css("display", "none");
            buildTable(data); 
         }
     }).error(function(jqXHR, textStatus) {
