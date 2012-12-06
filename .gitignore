@@ -11,4 +11,5 @@
 
 *.DS_Store
 
-
+# ignore gunicorn logs
+*.log
