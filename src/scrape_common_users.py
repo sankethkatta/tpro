@@ -5,6 +5,11 @@ import random
 import sys
 from mongo_models import db, User
 
+##############################################################################
+##
+##  Usage: python scrape_common_users <file_name_in_scraper/split_user_files>
+##  
+##############################################################################
 
 def main(fname):
     full_name = os.path.join('scraper/split_user_files', fname)
