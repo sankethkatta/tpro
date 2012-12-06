@@ -32,7 +32,10 @@ class Vector(Counter):
 
   def dot_product(self, other):
     v1, v2 = self, other
-    keys = set(v1.keys()) | set(v2.keys())
+    #keys = set(v1.keys()) | set(v2.keys())
+    keys = set()
+    for key in v1.iterkeys(): keys.add(key)
+    for key in v2.iterkeys(): keys.add(key)
     return reduce(operator.add, (v1[key] * v2[key] for key in keys))
       
   def cosine_similarity(self, other):
