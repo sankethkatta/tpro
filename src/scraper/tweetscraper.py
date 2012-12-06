@@ -7,7 +7,8 @@ import os
 import pymongo
 import re
 import nltk
-from collections import Counter
+from collections import Counter, defaultdict
+
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add("http")
@@ -71,23 +72,47 @@ API_KEYS = [
 CUR_KEY = -1
 NUM_ROLLS = 0
 api = None
-def ROLL_KEY():
+def roll_key():
     global CUR_KEY, NUM_ROLLS, api
-    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS) + 2
-    NUM_ROLLS += 1
+    CUR_KEY = (CUR_KEY + 1) % len(API_KEYS)
 
-    # break if we've rolled more than number of API_KEYS, so it doesn't get stuck in an infiniteloop
-    if NUM_ROLLS > len(API_KEYS):
-        sys.exit("ALL KEYS ARE RATE-LIMITED")
-    print "CUR_KEY: %d" % CUR_KEY
     api = twitter.Api(consumer_key = API_KEYS[CUR_KEY]['consumer_key'],
                        consumer_secret = API_KEYS[CUR_KEY]['consumer_secret'],
                        access_token_key = API_KEYS[CUR_KEY]['access_token_key'],
                        access_token_secret = API_KEYS[CUR_KEY]['access_token_secret'])
-ROLL_KEY()
 
+roll_key()
 users = [username.lower() for username in users]
 
+def scrape_friends_timelines(username):
+    #number_of_friends = api.GetUser(username).friends_count
+
+    user_record = db.recommendations.find_one({"username":username})
+    if user_record is None:
+        #scrape_user_timeline(username)
+        user_record = { "username": username, "friends": [] }
+    
+    friends = api.GetFriends(user=username)
+    friend_features = Counter()
+    for friend in friends:
+        friend_name = friend.screen_name.lower()
+        print friend_name
+        friend_record = db.users.find_one({"username":friend_name})
+        if friend_record and friend_record.get('features'):
+            friend_features += Counter(friend_record.get('features', {}))
+        elif not friend.protected:
+            try:
+                roll_key()
+                statuses = api.GetUserTimeline(friend.id, count=200, include_rts=True)
+            except twitter.TwitterError as e:
+                roll_key()
+                continue
+            for status in statuses: 
+                status_text = status.text.encode('ascii', 'ignore')
+                for token in tokenize(status_text):
+                    friend_features[token] += 1
+    return friend_features
+                
 
 def scrape_user_timeline(username):
     data = []
@@ -125,7 +150,7 @@ def scrape_to_csv(users):
             statuses = api.GetUserTimeline(users[i], count = 200, max_id = max_id, include_rts = True)
         except twitter.TwitterError as e:
             print e
-            ROLL_KEY()
+            roll_key()
             continue
 
         for s in statuses:
@@ -145,7 +170,19 @@ def scrape_to_csv(users):
             statusText = status.text.encode('ascii', 'ignore')
             writer.writerow([users[i], statusText])
 
+#import cPickle
+#try:
+#    inverted_index = cPickle.loads(open("inverted_index.cpickle", "rb").read())
+#    print "success"
+#except:
+#    print "exception error"
+#    inverted_index = defaultdict(set)
+#    all_users = db.users.find()
+#    for user in all_users:
+#        for token in user.get("features",{}).iterkeys():
+#            inverted_index[token].add(user["username"])
+#    cPickle.dump(inverted_index, open("inverted_index.cpickle", "wb"))
+#    print "saved inverted_index"
 
-
-if __name__ == '__main_':
-    scrape_user_timeline("rturumella")
+if __name__ == '__main__':
+    scrape_friends_timelines("sankethkatta")
