@@ -91,7 +91,7 @@ class User(object):
             print "found previously cached results"
             created = recommendation.get('created')
             # are the previously found results too old?
-            if not created or (datetime.datetime.utcnow()-created).days > 0:
+            if not created or (datetime.datetime.utcnow()-created).days > 9000:
                 # delete the outdated recommendation
                 db.recommendations.remove("results")
             else:
