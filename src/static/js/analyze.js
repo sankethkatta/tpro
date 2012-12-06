@@ -1,9 +1,8 @@
 $("#tweetinput input").focus();
-
 var button = $("#tweetinput button");
 var result_list = $("#result_list");
-var template = function(user, img) {
-	return '<li> <div class="span3"> <a href="http://twitter.com/'+user+'"> <img class="img-circle" src="'+img+'"> <iframe allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/follow_button.html?screen_name='+user+'&show_count=false" style="width:100%; height:25px;"></iframe> </div><!-- /.span3 --> </li>'
+var template = function(user, img, bio) {
+	return '<li > <div class="span3"> <a href="http://twitter.com/'+user+'" > <img class="img-circle" src="'+img+'"  data-content="'+bio+'" data-original-title="Biography"> <iframe allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/follow_button.html?screen_name='+user+'&show_count=false" style="width:100%; height:25px;"></iframe> </div><!-- /.span3 --> </li>'
 
 };
 $("#tweetinput").submit(function(e) {
@@ -41,7 +40,8 @@ var buildTable = function(data) {
     button.html("Analyze");
     result_list.children().remove()
     for (i = 0; i < data.length; i++) {
-	result_list.append(template(data[i].user, data[i].img));
+	result_list.append(template(data[i].user, data[i].img, data[i].bio));
     };
+	$("img").popover({trigger: "hover", placement:"top"})
 };
 var TWITTER_BUTTON = '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'

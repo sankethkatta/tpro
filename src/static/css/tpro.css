@@ -1,3 +1,7 @@
+#tagline {
+text-shadow: 1px 1px #333;
+}
+
 .hero-unit {
 	background-size: 100%;
     background: url("../img/twitteranalyzecover.jpg") no-repeat 0px -196px;

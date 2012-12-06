@@ -5,6 +5,7 @@ import json
 from collections import Counter, defaultdict
 import numpy
 from twitter_utils import topuserimageslower, topuserlower
+from scraper import bio_list
 from mongo_models import *
 from werkzeug.contrib.fixers import ProxyFix
 import random
@@ -28,7 +29,7 @@ def analyze():
         to_client = []
         averages = defaultdict(list)
         for score, username in results:
-            to_client.append({"user": username, "img": topuserimageslower.urls[username] })
+            to_client.append({"user": username, "img": topuserimageslower.urls[username], "bio": bio_list.bios[username] })
             
 	print to_client
         return json.dumps(to_client)
