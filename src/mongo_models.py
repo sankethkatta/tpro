@@ -114,7 +114,7 @@ class User(object):
         users = (u for u in db.users.find() if u.get("features"))
         START = time()
 
-        pool = mp.Pool(5)
+        #pool = mp.Pool(5)
         #results = pool.map(worker, ((vector, user) for user in users))
         #results = sorted(results, reverse=True)
         results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
