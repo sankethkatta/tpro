@@ -42,3 +42,16 @@
     background: url("../img/header_image_blurred.png") 100% 100%;
 
 }
+
+.img-circle {
+	margin-bottom: 5px;
+}
+
+iframe {
+	display: block;
+	margin-left: 20%;
+}
+
+#results_list #widget {
+	text-align: center;
+}

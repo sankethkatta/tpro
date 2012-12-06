@@ -22,5 +22,20 @@ def get_profileimage_urls(users):
         print user
     json.dump(urls, file)
 
+def get_profileimage(users):
+    """
+    Input: list of twitter handles
+    Output: dictionary of each handle as a key, urls as values
+    """
+    urls = {}
+    for user in users:
+        try:
+            urls[user] = (t.getProfileImageUrl(user, size="bigger"))
+        except:
+            pass
+        print user
+    print urls
+
 if __name__ == "__main__":
-    get_profileimage_urls(users)
+    #get_profileimage_urls(users)
+    get_profileimage(users=["chrisbrown"])

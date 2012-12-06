@@ -7,6 +7,7 @@ import os
 import csv
 import re
 from pprint import pprint
+from time import time
 
 stopwords = set(nltk.corpus.stopwords.words('english'))
 stopwords.add('http')
@@ -46,10 +47,14 @@ class User(object):
 
     @staticmethod
     def users_containing_terms(terms):
+	START = time()
         conditions = {"$or" : [ {'features.%s' % term : {"$gt": 0}} for term in terms]}
         users = list(User.users.find(conditions))
+	print "users_containg_terms: %s" % (time() - START)
+	START = time()
         for user in users:
             user['features'] = Vector(user.get('features', {}))
+	print "vectorize: %s" % (time() - START)
         return users
 
     @staticmethod
@@ -79,7 +84,10 @@ class User(object):
             tokens = tokenize(document)
             vector = Vector(tokens)
         print vector
-        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in User.users_containing_terms(tokens)], reverse=True)[:k]
+	users = User.users_containing_terms(tokens)
+	START = time()
+        results = sorted([(vector.cosine_similarity(user['features']), user['username']) for user in users], reverse=True)[:k]
+	print "cosine_similarity: %s" % (time() - START)
         return results
 
 def tokenize(s):

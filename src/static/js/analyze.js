@@ -1,6 +1,9 @@
 var button = $("#tweetinput button");
-var tbody = $("#resultTable tbody");
+var result_list = $("#result_list");
+var template = function(user, img) {
+	return '<li> <div class="span3"> <a href="http://twitter.com/'+user+'"> <img class="img-circle" src="'+img+'"> <iframe allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/follow_button.html?screen_name='+user+'&show_count=false" style="width:100%; height:25px;"></iframe> </div><!-- /.span3 --> </li>'
 
+};
 $("#tweetinput").submit(function(e) {
     e.preventDefault();
     var query = $(this).serialize();
@@ -10,49 +13,22 @@ $("#tweetinput").submit(function(e) {
     $.ajax({
         url: "/analyze",
         type: "POST",
+	timeout: 300000,
         dataType: "JSON",
         data: query
     }).done(function(data) {
        buildTable(data); 
+    }).error(function(jqXHR, textStatus) {
+	console.log(textStatus);		
     });
 });
 
 var buildTable = function(data) {
     button.removeAttr("disabled");
     button.html("Analyze");
-    tbody.children().remove()
+    result_list.children().remove()
     for (i = 0; i < data.length; i++) {
-       tbody.append("<tr><td>"+data[i].industry+"</td><td>"+data[i].user+"</td><td>"+data[i].score+"</td></tr>");
+	result_list.append(template(data[i].user, data[i].img));
     };
 };
-
-
-// Initialize the D3 Circle Space
-var container = d3.select("#circles").append("svg")
-    .attr("width", "100%")
-    .attr("height", "400px");
-
-container.selectAll("data-circles")
-    .data([{"color": "steelblue", "cx": "100px"}, {"color": "red", "cx": "200px"}])
-    .enter()
-    .append("circle")
-    .attr("class", "data-circles")
-    .attr("cx", function(d) { return(d.cx); })
-    .attr("cy", 80)
-    .attr("r", 20)
-    .style("stroke", "#d0d0d0")
-    .style("fill", function(d) { return(d.color); })
-    .transition().duration(500).attr("r", "40px");
-
-var circles = container.selectAll(".data-circles")
-container.append("svg:text")
-    .attr("x", 10)
-    .attr("dy", ".31em")
-    .text("testing");
-
-circles.on("mouseover", function() {
-    d3.select(this).transition().duration(500).delay(0).style("stroke-width", "5px");
-});
-circles.on("mouseout", function() {
-    d3.select(this).transition().duration(500).delay(0).style("stroke-width", "0px");
-});
+var TWITTER_BUTTON = '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
