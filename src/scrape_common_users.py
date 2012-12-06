@@ -12,7 +12,7 @@ def main(fname):
     success, failure = [], []
     with open(full_name, 'rb') as f:
 	for line in f:
-	    username = line.strip()
+	    username = line.strip().lower()
 	    print "SCRAPING OUR FRIEND:",username
 	    try:
    	        User.similar_documents(username)
