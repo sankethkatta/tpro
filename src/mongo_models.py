@@ -116,7 +116,7 @@ class User(object):
 
         #pool = mp.Pool(5)
         #results = pool.map(worker, ((vector, user) for user in users))
-        #results = sorted(results, reverse=True)
+        #results.sort(reverse=True)
         results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
         if results:
             db.recommendations.insert({"username": document, "results": results, "created": datetime.datetime.utcnow()})
