@@ -5,38 +5,20 @@
   <div class="row-fluid">
     <div class="span12">
       <div class="hero-unit">
-        <h1>Twitter Professionalism Analyzer</h1>
-        <p>Analyze your tweets against top industry professionals. Determine the similarity between you and the leaders of any industry.</p>
+        <h1>Twitter Content Analyzer</h1>
+        <p>Get recommended top twitter users, based on their similarity to the content you consume.</p>
         <p><a class="btn btn-primary btn-large" href="{{ url_for('analyze') }}">Get Started &raquo;</a></p>
       </div>
       <div class="row-fluid">
         <div class="page-header">
-            <h2>Sports</h2>
+            <h2>Top Users</h2>
         </div>
         <ul class="professionals_list">
-        {% for user, url in image_urls.sports.iteritems() %}
+        {% for user in rand_users %}
             <li>
             <div class="span3">
               <a href="http://twitter.com/{{ user }}">
-                  <img class="img-circle" src="{{ url }}">
-                  <h2>@{{ user }}</h2>
-              </a>
-            </div><!-- /.span3 -->
-            </li>
-        {% endfor %}
-        </ul>
-      </div><!--/row-->
-
-      <div class="row-fluid">
-        <div class="page-header">
-            <h2>Politics</h2>
-        </div>
-        <ul class="professionals_list">
-        {% for user, url in image_urls.politics.iteritems() %}
-            <li>
-            <div class="span3">
-              <a href="http://twitter.com/{{ user }}">
-                  <img class="img-circle" src="{{ url }}">
+                  <img class="img-circle" src="{{ image_urls[user] }}">
                   <h2>@{{ user }}</h2>
               </a>
             </div><!-- /.span3 -->

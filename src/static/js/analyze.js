@@ -17,11 +17,22 @@ $("#tweetinput").submit(function(e) {
         dataType: "JSON",
         data: query
     }).done(function(data) {
-       buildTable(data); 
+       if (data.length === 0) {
+	  flashMessage();
+	} else {
+           buildTable(data); 
+        }
     }).error(function(jqXHR, textStatus) {
 	console.log(textStatus);		
     });
 });
+
+var FLASH = $("#flash")
+var flashMessage = function() {
+    FLASH.slideDown(500).delay(3000).slideUp(500);
+    button.removeAttr("disabled");
+    button.html("Analyze");
+};
 
 var buildTable = function(data) {
     button.removeAttr("disabled");
