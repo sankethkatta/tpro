@@ -83,7 +83,7 @@ class User(object):
             print "user already exists"
 
     @staticmethod
-    def similar_documents(document, k=100):
+    def similar_documents(document, k=20):
        
         recommendation = db.recommendations.find_one({"username": document})
         if recommendation:
