@@ -9,4 +9,6 @@
 # ignoring json and csv files
 *.json
 
+*.DS_Store
+
 
