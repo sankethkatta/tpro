@@ -110,7 +110,11 @@ class User(object):
             print "username entered is neither a ground truth nor has a prior record"
             vector = Vector(scraper.scrape_friends_timelines(document))
             tokens = vector.keys()
-        print vector
+       
+	print vector
+	if not vector:
+	    return []
+
         users = (u for u in db.users.find() if u.get("features"))
         START = time()
 
