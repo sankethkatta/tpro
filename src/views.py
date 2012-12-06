@@ -24,7 +24,7 @@ def analyze():
         #similarity = s_engine.query(request.form['query'])
         query = request.form['query']
         print query
-        results = User.similar_documents(query)
+        results = User.similar_documents(query.lower())
         to_client = []
         averages = defaultdict(list)
         for score, username in results:
