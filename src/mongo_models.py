@@ -13,7 +13,7 @@ from time import time
 from collections import defaultdict
 import datetime
 
-stopwords = set(nltk.corpus.stopwords.words('english'))
+stopwords = scraper.stopwords
 stopwords.add('http')
 stopwords.add('co')
 stopwords.add('com')
