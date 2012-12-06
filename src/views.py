@@ -4,20 +4,19 @@ import os
 import json
 from collections import Counter, defaultdict
 import numpy
-from twitter_utils import topuserimageslower, hard_data
+from twitter_utils import topuserimageslower, topuserlower
 from mongo_models import *
 from werkzeug.contrib.fixers import ProxyFix
+import random
 
 app = Flask(__name__)
 #s_engine = search_engine.main()
 
 @app.route('/')
 def index():
-    # Load pre-fetched data from Twitter api 
-    image_urls = {"politics": hard_data.politics_image_urls,
-                  "sports": hard_data.sports_image_urls}
-
-    return render_template('index.html', image_urls=image_urls, home_active="active")
+    random.shuffle(topuserlower.users)
+    num_users = 20
+    return render_template('index.html', rand_users = topuserlower.users[:num_users], image_urls=topuserimageslower.urls, home_active="active")
 
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
