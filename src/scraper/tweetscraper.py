@@ -91,9 +91,9 @@ def scrape_friends_timelines(username):
     if user_record is None:
         #scrape_user_timeline(username)
         user_record = { "username": username, "friends": [] }
-   
+
     friend_features = Counter()
-    try: 
+    try:
         # attempt to get friends of user
         friends = api.GetFriends(user=username)
     except:
@@ -113,18 +113,40 @@ def scrape_friends_timelines(username):
             except twitter.TwitterError as e:
                 roll_key()
                 continue
-            for status in statuses: 
+            for status in statuses:
                 status_text = status.text.encode('ascii', 'ignore')
                 for token in tokenize(status_text):
                     friend_features[token] += 1
     return friend_features
-                
+
+def scrape_user_bios(users):
+    data = {}
+    i = 0
+    while i < len(users):
+        print "Bio for User: %s, Index: %d" % (users[i], i)
+        try:
+            user = api.GetUser(users[i])
+            data[users[i]] = user.description
+            i = i + 1
+        except twitter.TwitterError as e:
+            i = i + 1
+            print e
+            roll_key()
+            continue
+
+    #writes to a csv
+    for name, description in data.iteritems():
+        csvFileName = os.path.join('topuserbios', name + ".csv")
+        with open(csvFileName, 'wb') as f:
+            writer = csv.writer(f)
+            bio = description.encode('ascii', 'ignore')
+            writer.writerow([name, bio])
 
 def scrape_user_timeline(username):
     data = []
     max_id = None
 
- 
+
     print "hello this line is before statuses"
     print username
     statuses = api.GetUserTimeline(username, count = 200, include_rts = True)
@@ -143,8 +165,8 @@ def scrape_user_timeline(username):
                 user["features"][token] += 1
         print user
         db.users.insert(user)
-            
-            
+
+
 def scrape_to_csv(users):
 #failed indices: 381, 504, 583, 625, 897, 912
     for i in xrange(1005, len(users)):
