@@ -91,9 +91,15 @@ def scrape_friends_timelines(username):
     if user_record is None:
         #scrape_user_timeline(username)
         user_record = { "username": username, "friends": [] }
-    
-    friends = api.GetFriends(user=username)
+   
     friend_features = Counter()
+    try: 
+        # attempt to get friends of user
+        friends = api.GetFriends(user=username)
+    except:
+        # return empty hash if user is not available
+        return friend_features
+
     for friend in friends:
         friend_name = friend.screen_name.lower()
         print friend_name
