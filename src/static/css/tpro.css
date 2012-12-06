@@ -1,3 +1,20 @@
+.hero-unit {
+	background-size: 100%;
+    background: url("../img/twitteranalyzecover.jpg") no-repeat 0px -196px;
+    color: #fbfbfb;
+-webkit-border-radius: 0px;
+-moz-border-radius: 0px;
+border-radius: 0px;
+-webkit-background-size: cover; /*for webKit*/
+        -moz-background-size: cover; /*Mozilla*/
+        -o-background-size: cover; /*opera*/
+        background-size: cover; /*generic*/
+}
+
+.navbar-inner {
+	border-bottom: 0px;
+}
+
 .professionals_list {
     list-style: none;
 }

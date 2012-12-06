@@ -1,3 +1,5 @@
+$("#tweetinput input").focus();
+
 var button = $("#tweetinput button");
 var result_list = $("#result_list");
 var template = function(user, img) {
