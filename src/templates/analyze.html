@@ -9,11 +9,6 @@
              
              THIS WILL BE REPLACED WITH PROPER SCRIPTS AND STYLESHEETS
              -->
-        <style>
-            #tweetinput textarea{
-                width: 100%;
-            }
-        </style>
 	<div id="flash" class="alert alert-info" style="text-align: center; display: none;">
 		That twitter user has a protected timeline or does not exist
 	</div>
@@ -21,7 +16,10 @@
         <form id="tweetinput" class="form-search"  style="text-align: center">
         <fieldset>
             <legend>Analyze Your Handle</legend>
-            <input id="tweetinput" name="query" type="text"  placeholder="Enter Your Twitter Handle"></input>
+<div class="input-prepend">
+	<span class="add-on">@</span>
+            <input name="query" type="text"  placeholder="Enter Your Twitter Handle"></input>
+</div>
             <button type="submit" class="btn btn-primary">Analyze</button>
         </fieldset>
         </form>
@@ -31,6 +29,7 @@
         <div class="page-header">
             <h2>Results</h2>
         </div>
+	<img id="loading" style="margin: 0 auto; display: none;" src="{{ url_for('static', filename='img/loading.gif') }}" >
         <ul id="result_list" class="professionals_list"> </ul>
       </div><!--/row-->
         <script type="text/javascript" src="{{ url_for('static', filename='js/analyze.js') }}"></script>
