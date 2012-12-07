@@ -115,8 +115,7 @@ class User(object):
 	if not vector:
 	    return []
         
-        users_with_recs = set(u.get("username") for u in db.recommendations.find() if u.get("username"))
-        users = (dict(username=u.get("username"), features=Vector(u.get("features"))) for u in db.users.find() if u.get("features") and u.get("username") not in users_with_recs)
+        users = (dict(username=u.get("username"), features=Vector(u.get("features"))) for u in db.users.find() if u.get("features"))
         START = time()
 
         pool = mp.Pool(3)
