@@ -18,7 +18,7 @@
             <legend>Analyze Your Handle</legend>
 <div class="input-prepend">
 	<span class="add-on">@</span>
-            <input name="query" type="text"  placeholder="Enter Your Twitter Handle"></input>
+            <input name="query" type="text" data-provide="typeahead" data-items="10" data-source="{{ recommendations }}" placeholder="Enter Your Twitter Handle"></input>
 </div>
             <button type="submit" class="btn btn-primary">Analyze</button>
         </fieldset>

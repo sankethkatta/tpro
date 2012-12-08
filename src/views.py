@@ -34,7 +34,8 @@ def analyze():
 	print to_client
         return json.dumps(to_client)
     else:
-        return render_template('analyze.html', analyze_active="active")
+	recommendations = set(u.get("username") for u in db.recommendations.find() if u.get("username"))
+        return render_template('analyze.html', analyze_active="active", recommendations=recommendations)
 
 @app.route('/about')
 def about():
