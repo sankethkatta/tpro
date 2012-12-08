@@ -118,10 +118,10 @@ class User(object):
         users = (dict(username=u.get("username"), features=Vector(u.get("features"))) for u in db.users.find() if u.get("features"))
         START = time()
 
-        pool = mp.Pool(3)
-        results = pool.map(worker, ((Vector(vector), user) for user in users))
-        results.sort(reverse=True)
-        #results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
+        #pool = mp.Pool(3)
+        #results = pool.map(worker, ((Vector(vector), user) for user in users))
+        #results.sort(reverse=True)
+        results = sorted(((vector.cosine_similarity(Vector(user['features'])), user['username']) for user in users), reverse=True)
         if results:
             db.recommendations.insert({"username": document, "results": results, "created": datetime.datetime.utcnow()})
         print "cosine_similarity: %s" % (time() - START)
