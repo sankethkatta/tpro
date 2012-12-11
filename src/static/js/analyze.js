@@ -84,3 +84,4 @@ runSearch = debounce(runSearch, 500);
 SEARCH_BOX.typeahead({
     source: runSearch
 });
+SEARCH_BOX.focus();
