@@ -29,13 +29,13 @@ def analyze():
         to_client = []
         averages = defaultdict(list)
         for score, username in results:
-            to_client.append({"user": username, "img": topuserimageslower.urls[username], "bio": bio_list.bios[username] })
+            to_client.append({"user": username, "img": topuserimageslower.urls.get(username, ""), "bio": bio_list.bios.get(username,"") })
             
 	print to_client
         return json.dumps(to_client)
     else:
-	recommendations = json.dumps(list(set(u.get("username").encode('ascii', 'ignore') for u in db.recommendations.find() if u.get("username"))))
-        return render_template('analyze.html', analyze_active="active", recommendations=recommendations)
+	recommendations = json.dumps(sorted(set((u.get("username").encode('ascii', 'ignore') for u in db.recommendations.find() if u.get("username"))))[:500])
+    return render_template('analyze.html', analyze_active="active", recommendations=recommendations)
 
 @app.route('/about')
 def about():
