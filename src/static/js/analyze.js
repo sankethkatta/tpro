@@ -1,4 +1,3 @@
-$("#tweetinput input").focus();
 var loading = $("#loading");
 var button = $("#tweetinput button");
 var result_list = $("#result_list");
@@ -49,3 +48,40 @@ var buildTable = function(data) {
 	$("img").popover({trigger: "hover", placement:"top"})
 };
 var TWITTER_BUTTON = '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
+
+var SEARCH_BOX = $("input[name='query']")
+
+var runSearch = function(query, process) {
+    $.ajax({
+        url: "/getrec",
+        type: "GET",
+	timeout: 10000,
+        dataType: "JSON",
+        data: "query="+query
+    }).done(function(data) {
+	console.log(data);
+	process(data);
+    });
+};
+
+/*
+var debounce = function(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+
+runSearch = debounce(runSearch, 500);
+*/
+SEARCH_BOX.typeahead({
+    source: runSearch
+});
