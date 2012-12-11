@@ -59,7 +59,6 @@ var runSearch = function(query, process) {
         dataType: "JSON",
         data: "query="+query
     }).done(function(data) {
-	console.log(data);
 	process(data);
     });
 };
